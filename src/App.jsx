@@ -7,9 +7,9 @@ import StationDetail from './pages/StationDetail';
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="app-shell">
+      <div className="flex flex-col h-screen overflow-hidden bg-slate-950 text-slate-100">
         <Header />
-        <main className="app-main">
+        <main className="flex-1 overflow-hidden flex flex-col relative">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/stations/:id" element={<StationDetail />} />

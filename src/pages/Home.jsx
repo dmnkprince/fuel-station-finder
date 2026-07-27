@@ -17,7 +17,6 @@ export default function Home() {
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [toast, setToast] = useState('');
 
-  // Fetch stations
   useEffect(() => {
     fetchStations()
       .then(setStations)
@@ -25,22 +24,19 @@ export default function Home() {
       .finally(() => setLoading(false));
   }, []);
 
-  // Request GPS
   useEffect(() => {
     if (!navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition(
       (pos) => setUserPosition([pos.coords.latitude, pos.coords.longitude]),
-      () => {} // silently fail — fall back to Nigeria default
+      () => {}
     );
   }, []);
 
-  // Show toast for 3 seconds
   const showToast = (msg) => {
     setToast(msg);
     setTimeout(() => setToast(''), 3000);
   };
 
-  // Apply filters
   const filteredStations = useMemo(() => {
     return stations.filter((s) => {
       const searchMatch =
@@ -61,22 +57,21 @@ export default function Home() {
   }, [stations, filters]);
 
   const handleReportSuccess = (newReport) => {
-    // Refresh station list to pick up new report
     fetchStations().then(setStations);
     showToast('✅ Report submitted successfully! Thank you.');
   };
 
   return (
-    <div id="home-page" className="home-layout">
-      {/* Map — takes most of the screen */}
-      <div className="map-section">
+    <div id="home-page" className="flex-1 flex flex-col md:flex-row overflow-hidden relative w-full h-full">
+      {/* Map Section */}
+      <div className="flex-1 relative bg-slate-950 min-h-[50vh] md:min-h-0">
         {loading && (
-          <div className="map-loading">
-            <div className="spinner" />
-            <p>Loading stations…</p>
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-slate-400 z-10">
+            <div className="w-9 h-9 border-3 border-slate-800 border-t-amber-500 rounded-full spinner-animate" />
+            <p className="text-sm font-semibold">Loading map data...</p>
           </div>
         )}
-        {error && <div className="map-error">⚠️ {error}</div>}
+        {error && <div className="absolute inset-0 flex items-center justify-center text-rose-500 font-bold z-10">⚠️ {error}</div>}
         {!loading && !error && (
           <StationMap
             stations={filteredStations}
@@ -87,16 +82,16 @@ export default function Home() {
         )}
       </div>
 
-      {/* Sidebar */}
-      <aside id="home-sidebar" className="home-sidebar">
-        <div className="sidebar-top">
-          <h2 className="sidebar-heading">
+      {/* Sidebar Section */}
+      <aside id="home-sidebar" className="w-full md:w-[400px] border-t md:border-t-0 md:border-l border-slate-800 bg-slate-900 flex flex-col flex-shrink-0 h-[50vh] md:h-full overflow-hidden">
+        <div className="flex items-center justify-between p-4 border-b border-slate-800 flex-shrink-0">
+          <h2 className="text-sm font-black text-slate-100 flex items-center gap-2 uppercase tracking-wider">
             Fuel Stations
-            <span className="sidebar-count">{filteredStations.length}</span>
+            <span className="bg-amber-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full">{filteredStations.length}</span>
           </h2>
           <button
             id="btn-report-hero"
-            className="btn-primary btn-sm"
+            className="bg-amber-500 hover:bg-amber-600 active:scale-95 text-slate-950 font-extrabold text-xs px-3 py-1.5 rounded-lg transition-all shadow-md"
             onClick={() => setReportStation(selectedStation ?? stations[0])}
             disabled={stations.length === 0}
           >
@@ -106,11 +101,11 @@ export default function Home() {
 
         <SearchFilter filters={filters} onChange={setFilters} />
 
-        <div className="station-list" id="station-list">
+        <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3" id="station-list">
           {filteredStations.length === 0 && !loading && (
-            <div className="empty-state">
-              <span className="empty-icon">🔍</span>
-              <p>No stations match your filters.</p>
+            <div className="flex flex-col items-center justify-center gap-2 py-10 text-slate-500 text-center">
+              <span className="text-3xl">🔍</span>
+              <p className="text-xs font-semibold">No stations match filters.</p>
             </div>
           )}
           {filteredStations.map((station) => (
@@ -133,8 +128,12 @@ export default function Home() {
         />
       )}
 
-      {/* Toast notification */}
-      {toast && <div id="toast-message" className="toast">{toast}</div>}
+      {/* Toast Notification */}
+      {toast && (
+        <div id="toast-message" className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 border border-amber-500/50 text-slate-100 text-xs font-bold px-5 py-3 rounded-full shadow-2xl z-[9999] whitespace-nowrap animate-bounce">
+          {toast}
+        </div>
+      )}
     </div>
   );
 }

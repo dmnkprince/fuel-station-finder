@@ -4,13 +4,12 @@ import { Link } from 'react-router-dom';
 import 'leaflet/dist/leaflet.css';
 
 const STATUS_COLORS = {
-  green:  { color: '#22c55e', fillColor: '#16a34a' },
-  yellow: { color: '#eab308', fillColor: '#ca8a04' },
-  red:    { color: '#ef4444', fillColor: '#dc2626' },
-  grey:   { color: '#9ca3af', fillColor: '#6b7280' },
+  green:  { color: '#10b981', fillColor: '#059669' },
+  yellow: { color: '#f59e0b', fillColor: '#d97706' },
+  red:    { color: '#f43f5e', fillColor: '#e11d48' },
+  grey:   { color: '#64748b', fillColor: '#475569' },
 };
 
-/** Sub-component: smoothly flies to user location when provided */
 function FlyToUser({ position }) {
   const map = useMap();
   useEffect(() => {
@@ -19,7 +18,6 @@ function FlyToUser({ position }) {
   return null;
 }
 
-/** Sub-component: flies to selected station when highlighted from sidebar */
 function FlyToStation({ station }) {
   const map = useMap();
   useEffect(() => {
@@ -29,16 +27,15 @@ function FlyToStation({ station }) {
 }
 
 export default function StationMap({ stations, userPosition, selectedStation, onMarkerClick }) {
-  // Default center: Nigeria geographic center
   const defaultCenter = [9.082, 8.6753];
   const defaultZoom = 6;
 
   return (
-    <div id="station-map-container" className="map-container">
+    <div id="station-map-container" className="w-full h-full relative">
       <MapContainer
         center={defaultCenter}
         zoom={defaultZoom}
-        className="leaflet-map"
+        className="w-full h-full"
         zoomControl={true}
       >
         <TileLayer
@@ -46,13 +43,9 @@ export default function StationMap({ stations, userPosition, selectedStation, on
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {/* Fly to user GPS position */}
         {userPosition && <FlyToUser position={userPosition} />}
-
-        {/* Fly to selected station from sidebar */}
         {selectedStation && <FlyToStation station={selectedStation} />}
 
-        {/* User's current location marker */}
         {userPosition && (
           <CircleMarker
             center={userPosition}
@@ -63,7 +56,6 @@ export default function StationMap({ stations, userPosition, selectedStation, on
           </CircleMarker>
         )}
 
-        {/* Station markers */}
         {stations.map((station) => {
           const colors = STATUS_COLORS[station.status] ?? STATUS_COLORS.grey;
           const report = station.latest_report;
@@ -77,22 +69,29 @@ export default function StationMap({ stations, userPosition, selectedStation, on
               eventHandlers={{ click: () => onMarkerClick?.(station) }}
             >
               <Popup className="station-popup">
-                <div className="popup-inner">
-                  <strong className="popup-name">{station.name}</strong>
-                  <span className="popup-brand">{station.brand}</span>
+                <div className="p-4 flex flex-col gap-1 min-w-[200px]">
+                  <strong className="text-slate-100 font-extrabold text-sm block leading-tight">{station.name}</strong>
+                  <span className="text-slate-400 font-bold text-[9px] uppercase tracking-wider">{station.brand}</span>
+                  
                   {report ? (
-                    <>
-                      <span className="popup-fuel">{report.fuel_type}</span>
-                      <span className="popup-price">
+                    <div className="flex flex-col gap-1 border-t border-slate-800/80 pt-2 mt-2">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-amber-500 font-extrabold bg-amber-500/10 px-2 py-0.5 rounded">{report.fuel_type}</span>
+                        <span className="text-slate-400 font-medium text-[10px]">{report.minutes_ago}m ago</span>
+                      </div>
+                      <span className="text-lg font-black text-slate-100 mt-1">
                         {report.is_available ? `₦${report.price_per_litre.toLocaleString()}/L` : 'Out of Stock'}
                       </span>
-                      <span className="popup-time">{report.minutes_ago}m ago</span>
-                    </>
+                    </div>
                   ) : (
-                    <span className="popup-no-report">No report yet</span>
+                    <span className="text-slate-500 font-medium text-xs italic block mt-2">No reports yet</span>
                   )}
-                  <Link to={`/stations/${station.id}`} className="popup-link">
-                    View Details →
+                  
+                  <Link 
+                    to={`/stations/${station.id}`} 
+                    className="text-xs font-bold text-amber-500 hover:text-amber-400 hover:underline border-t border-slate-800/80 pt-2.5 mt-2 text-center"
+                  >
+                    View Station Details →
                   </Link>
                 </div>
               </Popup>
