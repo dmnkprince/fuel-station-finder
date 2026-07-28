@@ -1,4 +1,6 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { upvoteReport } from '../services/api';
 
 const STATUS_CONFIG = {
   green:  { dot: 'bg-emerald-500 shadow-[0_0_8px_#10b981]',  label: 'In Stock',     emoji: '🟢', styleClass: 'bg-emerald-950/40 text-emerald-400 border-emerald-800/30' },
@@ -9,9 +11,47 @@ const STATUS_CONFIG = {
 
 const QUEUE_ICONS = { None: '—', Short: '🚗', Moderate: '🚗🚗', Long: '🚗🚗🚗' };
 
-export default function StationCard({ station, onClick, isHighlighted }) {
+export default function StationCard({ station, onClick, isHighlighted, onUpvoteSuccess }) {
   const cfg = STATUS_CONFIG[station.status] ?? STATUS_CONFIG.grey;
   const report = station.latest_report;
+
+  const [upvotes, setUpvotes] = useState(report?.upvotes ?? 0);
+  const [hasVoted, setHasVoted] = useState(false);
+  const [isUpvoting, setIsUpvoting] = useState(false);
+
+  useEffect(() => {
+    setUpvotes(report?.upvotes ?? 0);
+    if (report?.id) {
+      const votedList = JSON.parse(localStorage.getItem('upvoted_reports') || '[]');
+      setHasVoted(votedList.includes(report.id));
+    }
+  }, [report]);
+
+  const handleQuickUpvote = async (e) => {
+    e.stopPropagation();
+    if (!report?.id || hasVoted || isUpvoting) return;
+
+    setIsUpvoting(true);
+    // Optimistic UI update
+    setUpvotes((prev) => prev + 1);
+    setHasVoted(true);
+
+    try {
+      await upvoteReport(report.id);
+      const votedList = JSON.parse(localStorage.getItem('upvoted_reports') || '[]');
+      if (!votedList.includes(report.id)) {
+        votedList.push(report.id);
+        localStorage.setItem('upvoted_reports', JSON.stringify(votedList));
+      }
+      onUpvoteSuccess?.();
+    } catch {
+      // Revert if failed
+      setUpvotes((prev) => prev - 1);
+      setHasVoted(false);
+    } finally {
+      setIsUpvoting(false);
+    }
+  };
 
   return (
     <div
@@ -71,18 +111,34 @@ export default function StationCard({ station, onClick, isHighlighted }) {
         <p className="text-xs text-slate-500 italic mt-1 font-medium">No reports yet — submit an update!</p>
       )}
 
-      {/* Footer */}
+      {/* Footer / Quick Verify Row */}
       <div className="flex items-center justify-between border-t border-slate-800/60 pt-2.5 mt-1">
-        <span className="text-xs text-slate-500 font-semibold" title="Community Upvotes">
-          👍 <span className="text-slate-300 font-bold">{report?.upvotes ?? 0}</span>
-        </span>
+        {report ? (
+          <button
+            id={`verify-btn-${station.id}`}
+            className={`text-xs font-extrabold flex items-center gap-1.5 px-3 py-1 rounded-lg border transition-all ${
+              hasVoted
+                ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/50 cursor-default'
+                : 'bg-slate-800 text-slate-200 border-slate-700 hover:border-amber-500 hover:text-amber-500 active:scale-95'
+            }`}
+            onClick={handleQuickUpvote}
+            disabled={hasVoted || isUpvoting}
+            title={hasVoted ? 'You verified this price update' : 'Click to verify & upvote this price update'}
+          >
+            {hasVoted ? '✅ Verified' : '👍 Verify Price'}
+            <span className="bg-slate-950 px-1.5 py-0.2 text-[10px] rounded text-slate-300 font-bold">{upvotes}</span>
+          </button>
+        ) : (
+          <span className="text-xs text-slate-500 font-medium">No votes yet</span>
+        )}
+
         <Link
           to={`/stations/${station.id}`}
           id={`view-details-${station.id}`}
           className="text-xs font-bold text-amber-500 hover:text-amber-400 hover:underline flex items-center gap-0.5 transition-all"
           onClick={(e) => e.stopPropagation()}
         >
-          View Details →
+          Details →
         </Link>
       </div>
     </div>

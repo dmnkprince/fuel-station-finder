@@ -1,6 +1,7 @@
 import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaflet';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { upvoteReport } from '../services/api';
 import 'leaflet/dist/leaflet.css';
 
 const STATUS_COLORS = {
@@ -26,9 +27,82 @@ function FlyToStation({ station }) {
   return null;
 }
 
-export default function StationMap({ stations, userPosition, selectedStation, onMarkerClick }) {
-  const defaultCenter = [9.082, 8.6753];
-  const defaultZoom = 6;
+function MapPopupContent({ station, report, onUpvote }) {
+  const [upvotes, setUpvotes] = useState(report?.upvotes ?? 0);
+  const [hasVoted, setHasVoted] = useState(false);
+
+  useEffect(() => {
+    setUpvotes(report?.upvotes ?? 0);
+    if (report?.id) {
+      const votedList = JSON.parse(localStorage.getItem('upvoted_reports') || '[]');
+      setHasVoted(votedList.includes(report.id));
+    }
+  }, [report]);
+
+  const handlePopupUpvote = async () => {
+    if (!report?.id || hasVoted) return;
+
+    setUpvotes((p) => p + 1);
+    setHasVoted(true);
+
+    try {
+      await upvoteReport(report.id);
+      const votedList = JSON.parse(localStorage.getItem('upvoted_reports') || '[]');
+      if (!votedList.includes(report.id)) {
+        votedList.push(report.id);
+        localStorage.setItem('upvoted_reports', JSON.stringify(votedList));
+      }
+      onUpvote?.();
+    } catch {
+      setUpvotes((p) => p - 1);
+      setHasVoted(false);
+    }
+  };
+
+  return (
+    <div className="p-4 flex flex-col gap-1 min-w-[210px]">
+      <strong className="text-slate-100 font-extrabold text-sm block leading-tight">{station.name}</strong>
+      <span className="text-slate-400 font-bold text-[9px] uppercase tracking-wider">{station.brand}</span>
+      
+      {report ? (
+        <div className="flex flex-col gap-1.5 border-t border-slate-800/80 pt-2 mt-2">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-amber-500 font-extrabold bg-amber-500/10 px-2 py-0.5 rounded">{report.fuel_type}</span>
+            <span className="text-slate-400 font-medium text-[10px]">{report.minutes_ago}m ago</span>
+          </div>
+          <span className="text-lg font-black text-slate-100 mt-0.5">
+            {report.is_available ? `₦${report.price_per_litre.toLocaleString()}/L` : 'Out of Stock'}
+          </span>
+          <button
+            className={`w-full text-xs font-extrabold py-1.5 px-3 rounded-lg border transition-all mt-1 ${
+              hasVoted
+                ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/50 cursor-default'
+                : 'bg-slate-800 text-slate-200 border-slate-700 hover:border-amber-500 hover:text-amber-500 active:scale-95'
+            }`}
+            onClick={handlePopupUpvote}
+            disabled={hasVoted}
+          >
+            {hasVoted ? '✅ Verified' : `👍 Verify Price (${upvotes})`}
+          </button>
+        </div>
+      ) : (
+        <span className="text-slate-500 font-medium text-xs italic block mt-2">No reports yet</span>
+      )}
+      
+      <Link 
+        to={`/stations/${station.id}`} 
+        className="text-xs font-bold text-amber-500 hover:text-amber-400 hover:underline border-t border-slate-800/80 pt-2 mt-2 text-center"
+      >
+        View Station Details →
+      </Link>
+    </div>
+  );
+}
+
+export default function StationMap({ stations, userPosition, selectedStation, onMarkerClick, onUpvoteSuccess }) {
+  // Default map view centered on Yenagoa, Bayelsa State
+  const defaultCenter = [4.927, 6.295];
+  const defaultZoom = 13;
 
   return (
     <div id="station-map-container" className="w-full h-full relative">
@@ -69,31 +143,7 @@ export default function StationMap({ stations, userPosition, selectedStation, on
               eventHandlers={{ click: () => onMarkerClick?.(station) }}
             >
               <Popup className="station-popup">
-                <div className="p-4 flex flex-col gap-1 min-w-[200px]">
-                  <strong className="text-slate-100 font-extrabold text-sm block leading-tight">{station.name}</strong>
-                  <span className="text-slate-400 font-bold text-[9px] uppercase tracking-wider">{station.brand}</span>
-                  
-                  {report ? (
-                    <div className="flex flex-col gap-1 border-t border-slate-800/80 pt-2 mt-2">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-amber-500 font-extrabold bg-amber-500/10 px-2 py-0.5 rounded">{report.fuel_type}</span>
-                        <span className="text-slate-400 font-medium text-[10px]">{report.minutes_ago}m ago</span>
-                      </div>
-                      <span className="text-lg font-black text-slate-100 mt-1">
-                        {report.is_available ? `₦${report.price_per_litre.toLocaleString()}/L` : 'Out of Stock'}
-                      </span>
-                    </div>
-                  ) : (
-                    <span className="text-slate-500 font-medium text-xs italic block mt-2">No reports yet</span>
-                  )}
-                  
-                  <Link 
-                    to={`/stations/${station.id}`} 
-                    className="text-xs font-bold text-amber-500 hover:text-amber-400 hover:underline border-t border-slate-800/80 pt-2.5 mt-2 text-center"
-                  >
-                    View Station Details →
-                  </Link>
-                </div>
+                <MapPopupContent station={station} report={report} onUpvote={onUpvoteSuccess} />
               </Popup>
             </CircleMarker>
           );
