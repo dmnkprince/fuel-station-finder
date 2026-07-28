@@ -78,6 +78,7 @@ export default function Home() {
             userPosition={userPosition}
             selectedStation={selectedStation}
             onMarkerClick={setSelectedStation}
+            onUpvoteSuccess={() => fetchStations().then(setStations)}
           />
         )}
       </div>
@@ -114,6 +115,7 @@ export default function Home() {
               station={station}
               isHighlighted={selectedStation?.id === station.id}
               onClick={() => setSelectedStation(station)}
+              onUpvoteSuccess={() => fetchStations().then(setStations)}
             />
           ))}
         </div>
