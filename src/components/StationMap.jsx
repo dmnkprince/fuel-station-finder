@@ -2,6 +2,7 @@ import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaf
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { upvoteReport } from '../services/api';
+import { getFuelDisplay } from '../utils/constants';
 import 'leaflet/dist/leaflet.css';
 
 const STATUS_COLORS = {
@@ -67,7 +68,7 @@ function MapPopupContent({ station, report, onUpvote }) {
       {report ? (
         <div className="flex flex-col gap-1.5 border-t border-slate-800/80 pt-2 mt-2">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-amber-500 font-extrabold bg-amber-500/10 px-2 py-0.5 rounded">{report.fuel_type}</span>
+            <span className="text-amber-500 font-extrabold bg-amber-500/10 px-2 py-0.5 rounded">{getFuelDisplay(report.fuel_type)}</span>
             <span className="text-slate-400 font-medium text-[10px]">{report.minutes_ago}m ago</span>
           </div>
           <span className="text-lg font-black text-slate-100 mt-0.5">

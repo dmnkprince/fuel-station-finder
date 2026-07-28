@@ -1,4 +1,6 @@
-const FUEL_TYPES = ['All', 'PMS', 'AGO', 'DPK', 'LPG'];
+import { getFuelDisplay } from '../utils/constants';
+
+const FUEL_TYPES = ['All', 'Petrol', 'Diesel', 'Kerosene', 'Cooking Gas'];
 const STATUSES = ['All', 'green', 'yellow', 'red', 'grey'];
 
 const STATUS_LABELS = {
@@ -33,7 +35,7 @@ export default function SearchFilter({ filters, onChange }) {
           {FUEL_TYPES.map((f) => (
             <button
               key={f}
-              id={`filter-fuel-${f}`}
+              id={`filter-fuel-${f.replace(/\s+/g, '-')}`}
               className={`px-3 py-1 rounded-full text-xs font-semibold border transition-all ${
                 filters.fuelType === f
                   ? 'bg-amber-500 border-amber-500 text-slate-950 shadow-md shadow-amber-500/10'
@@ -41,7 +43,7 @@ export default function SearchFilter({ filters, onChange }) {
               }`}
               onClick={() => set('fuelType', f)}
             >
-              {f}
+              {f === 'All' ? '🌐 All' : f}
             </button>
           ))}
         </div>

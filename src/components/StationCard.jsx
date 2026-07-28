@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { upvoteReport } from '../services/api';
+import { getFuelDisplay } from '../utils/constants';
 
 const STATUS_CONFIG = {
   green:  { dot: 'bg-emerald-500 shadow-[0_0_8px_#10b981]',  label: 'In Stock',     emoji: '🟢', styleClass: 'bg-emerald-950/40 text-emerald-400 border-emerald-800/30' },
@@ -32,7 +33,6 @@ export default function StationCard({ station, onClick, isHighlighted, onUpvoteS
     if (!report?.id || hasVoted || isUpvoting) return;
 
     setIsUpvoting(true);
-    // Optimistic UI update
     setUpvotes((prev) => prev + 1);
     setHasVoted(true);
 
@@ -90,7 +90,9 @@ export default function StationCard({ station, onClick, isHighlighted, onUpvoteS
         <div className="grid grid-cols-4 gap-2 bg-slate-950/60 border border-slate-900 rounded-lg p-2.5 text-center">
           <div className="flex flex-col items-center gap-0.5">
             <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wide">Fuel</span>
-            <span className="text-xs font-black text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded">{report.fuel_type}</span>
+            <span className="text-xs font-black text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded" title={getFuelDisplay(report.fuel_type)}>
+              {getFuelDisplay(report.fuel_type)}
+            </span>
           </div>
           <div className="flex flex-col items-center gap-0.5">
             <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wide">Price</span>

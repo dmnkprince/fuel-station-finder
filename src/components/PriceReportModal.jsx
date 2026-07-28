@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { submitReport } from '../services/api';
+import { getFuelCode } from '../utils/constants';
 
-const FUEL_TYPES = ['PMS', 'AGO', 'DPK', 'LPG'];
+const FUEL_TYPES = ['Petrol', 'Diesel', 'Kerosene', 'Cooking Gas'];
 const QUEUE_LENGTHS = ['None', 'Short', 'Moderate', 'Long'];
 
 const DEFAULT_FORM = {
-  fuel_type: 'PMS',
+  fuel_type: 'Petrol',
   is_available: true,
   price_per_litre: '',
   queue_length: 'Short',
@@ -30,7 +31,7 @@ export default function PriceReportModal({ station, onClose, onSuccess }) {
     try {
       const payload = {
         station_id: station.id,
-        fuel_type: form.fuel_type,
+        fuel_type: getFuelCode(form.fuel_type), // Convert e.g. "Petrol" -> "PMS" for DB compatibility
         is_available: form.is_available,
         price_per_litre: form.is_available ? parseFloat(form.price_per_litre) : 0,
         queue_length: form.is_available ? form.queue_length : 'None',
@@ -75,13 +76,13 @@ export default function PriceReportModal({ station, onClose, onSuccess }) {
           {/* Fuel Type */}
           <div className="flex flex-col gap-2">
             <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest" htmlFor="modal-fuel-type">Fuel Type</label>
-            <div className="flex gap-2">
+            <div className="grid grid-cols-2 gap-2">
               {FUEL_TYPES.map((f) => (
                 <button
                   key={f}
                   type="button"
-                  id={`modal-fuel-${f}`}
-                  className={`flex-1 py-2 rounded-lg text-xs font-bold border transition-all ${
+                  id={`modal-fuel-${f.replace(/\s+/g, '-')}`}
+                  className={`py-3 px-4 rounded-lg text-xs font-bold border transition-all ${
                     form.fuel_type === f
                       ? 'bg-amber-500 border-amber-500 text-slate-950 shadow-md'
                       : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-amber-500/40 hover:text-amber-500'
@@ -137,7 +138,7 @@ export default function PriceReportModal({ station, onClose, onSuccess }) {
                     type="number"
                     min="0"
                     step="0.01"
-                    placeholder="e.g. 650"
+                    placeholder="e.g. 1325"
                     className="w-full pl-8 pr-4 py-2.5 bg-slate-950 border border-slate-800 rounded-lg text-slate-100 font-bold outline-none focus:border-amber-500 transition-all placeholder-slate-700"
                     value={form.price_per_litre}
                     onChange={(e) => set('price_per_litre', e.target.value)}

@@ -4,6 +4,7 @@ import StationMap from '../components/StationMap';
 import StationCard from '../components/StationCard';
 import SearchFilter from '../components/SearchFilter';
 import PriceReportModal from '../components/PriceReportModal';
+import { getFuelDisplay } from '../utils/constants';
 
 const DEFAULT_FILTERS = { search: '', fuelType: 'All', status: 'All' };
 
@@ -47,7 +48,7 @@ export default function Home() {
 
       const fuelMatch =
         filters.fuelType === 'All' ||
-        s.latest_report?.fuel_type === filters.fuelType;
+        getFuelDisplay(s.latest_report?.fuel_type) === filters.fuelType;
 
       const statusMatch =
         filters.status === 'All' || s.status === filters.status;

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { fetchStationById, upvoteReport } from '../services/api';
 import PriceReportModal from '../components/PriceReportModal';
+import { getFuelDisplay } from '../utils/constants';
 
 const STATUS_CONFIG = {
   green:  { label: 'In Stock',     emoji: '🟢', styleClass: 'bg-emerald-950/40 text-emerald-400 border-emerald-800/30' },
@@ -113,7 +114,7 @@ export default function StationDetail() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 bg-slate-950/60 border border-slate-950 rounded-xl p-4 text-center">
             <div className="flex flex-col items-center gap-1">
               <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Fuel Type</span>
-              <span className="text-xs font-black text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded">{latestReport.fuel_type}</span>
+              <span className="text-xs font-black text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded">{getFuelDisplay(latestReport.fuel_type)}</span>
             </div>
             <div className="flex flex-col items-center gap-1">
               <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Price / Litre</span>
@@ -164,7 +165,7 @@ export default function StationDetail() {
                   }`}
                 >
                   <div className="flex items-center gap-2.5 flex-wrap">
-                    <span className="text-xs font-black text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded">{r.fuel_type}</span>
+                    <span className="text-xs font-black text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded">{getFuelDisplay(r.fuel_type)}</span>
                     {r.is_available ? (
                       <span className="text-[10px] font-bold bg-emerald-950/40 text-emerald-400 border border-emerald-800/30 px-2.5 py-0.5 rounded-full">✅ In Stock</span>
                     ) : (
