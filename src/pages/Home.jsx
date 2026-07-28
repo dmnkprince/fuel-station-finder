@@ -25,18 +25,30 @@ export default function Home() {
       .finally(() => setLoading(false));
   }, []);
 
-  useEffect(() => {
-    if (!navigator.geolocation) return;
-    navigator.geolocation.getCurrentPosition(
-      (pos) => setUserPosition([pos.coords.latitude, pos.coords.longitude]),
-      () => {}
-    );
-  }, []);
-
   const showToast = (msg) => {
     setToast(msg);
     setTimeout(() => setToast(''), 3000);
   };
+
+  const handleLocateUser = () => {
+    if (!navigator.geolocation) {
+      showToast('❌ Geolocation is not supported by your browser.');
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserPosition([pos.coords.latitude, pos.coords.longitude]);
+        showToast('📍 Map centered on your location.');
+      },
+      () => {
+        showToast('⚠️ Could not fetch your location. Please check your permissions.');
+      }
+    );
+  };
+
+  useEffect(() => {
+    handleLocateUser();
+  }, []);
 
   const filteredStations = useMemo(() => {
     return stations.filter((s) => {
@@ -80,6 +92,7 @@ export default function Home() {
             selectedStation={selectedStation}
             onMarkerClick={setSelectedStation}
             onUpvoteSuccess={() => fetchStations().then(setStations)}
+            onLocateUser={handleLocateUser}
           />
         )}
       </div>
