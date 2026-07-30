@@ -1,4 +1,4 @@
-import { getFuelDisplay } from '../utils/constants';
+// import { getFuelDisplay } from '../utils/constants';
 
 const FUEL_TYPES = ['All', 'Petrol', 'Diesel', 'Kerosene', 'Cooking Gas'];
 const STATUSES = ['All', 'green', 'yellow', 'red', 'grey'];
@@ -14,7 +14,7 @@ export default function SearchFilter({ filters, onChange }) {
   const set = (key, val) => onChange({ ...filters, [key]: val });
 
   return (
-    <div id="search-filter" className="p-4 bg-slate-900 border-b border-slate-800 flex flex-col gap-3 flex-shrink-0">
+    <div id="search-filter" className="p-4 bg-slate-900 border-b border-slate-800 flex flex-col gap-3 shrink-0">
       {/* Search Input */}
       <div className="relative flex items-center">
         <span className="absolute left-3 text-slate-500 text-sm pointer-events-none">🔍</span>

@@ -47,7 +47,7 @@ export default function PriceReportModal({ station, onClose, onSuccess }) {
   };
 
   return (
-    <div id="report-modal-overlay" className="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-[1000] flex items-center justify-center p-4" onClick={onClose}>
+    <div id="report-modal-overlay" className="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-1000 flex items-center justify-center p-4" onClick={onClose}>
       <div
         id="report-modal"
         className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl shadow-slate-950/50"

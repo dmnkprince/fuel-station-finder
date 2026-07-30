@@ -3,6 +3,7 @@ import './App.css';
 import Header from './components/Header';
 import Home from './pages/Home';
 import StationDetail from './pages/StationDetail';
+import FooterSection from './components/FooterSection';
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
             <Route path="/stations/:id" element={<StationDetail />} />
           </Routes>
         </main>
+        <FooterSection/>
       </div>
     </BrowserRouter>
   );
