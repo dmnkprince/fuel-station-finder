@@ -25,29 +25,46 @@ const FooterSection = () => {
   ];
 
   return (
-    <footer className="flex items-center justify-between px-4 sm:px-6 h-12 bg-slate-900/90 border-t border-slate-800 z-50 backdrop-blur-md shrink-0 text-sm text-slate-400">
-      {/* Left side — always visible */}
-      <div>
-        © {currentYear} <Link to="/" className="font-semibold text-slate-200 hover:text-emerald-400 transition-colors">FuelFinder</Link>. All rights reserved.
-      </div>
+    <footer className="px-4 sm:px-6 py-2.5 sm:py-2 bg-slate-900/90 border-t border-slate-800 z-50 backdrop-blur-md shrink-0 text-sm text-slate-400">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-1.5 sm:gap-2">
+        {/* Left side — copyright */}
+        <div className="text-center sm:text-left text-xs sm:text-sm">
+          © {currentYear}{" "}
+          <Link
+            to="/"
+            className="font-semibold text-slate-200 hover:text-emerald-400 transition-colors"
+          >
+            FuelFinder
+          </Link>
+          . All rights reserved.
+        </div>
 
-      {/* Right side — visible on md+ */}
-      <div className="hidden md:flex flex-col items-center gap-2 lg:flex-row">
-        <div>Designed by Dmnk</div>
-        <div className="flex items-center gap-2">
-          {socialLinks.map((link) => (
-            <a
-              key={link.name}
-              href={link.url}
-              target={link.url.startsWith("http") ? "_blank" : "_self"}
-              rel="noopener noreferrer"
-              className="hover:text-emerald-400 transition-colors p-1"
-              aria-label={link.name}
-              title={link.name}
-            >
-              <FontAwesomeIcon icon={link.icon} className="text-lg" />
-            </a>
-          ))}
+        {/* Center — About link */}
+        <Link
+          to="/about"
+          className="text-xs font-semibold text-slate-400 hover:text-amber-500 transition-colors order-first sm:order-none"
+        >
+          About Us
+        </Link>
+
+        {/* Right side — designer credit + social links */}
+        <div className="flex items-center gap-2 text-xs sm:text-sm">
+          <span>Designed by Dmnk</span>
+          <div className="flex items-center gap-1.5">
+            {socialLinks.map((link) => (
+              <a
+                key={link.name}
+                href={link.url}
+                target={link.url.startsWith("http") ? "_blank" : "_self"}
+                rel="noopener noreferrer"
+                className="hover:text-emerald-400 transition-colors p-1"
+                aria-label={link.name}
+                title={link.name}
+              >
+                <FontAwesomeIcon icon={link.icon} className="text-base sm:text-lg" />
+              </a>
+            ))}
+          </div>
         </div>
       </div>
     </footer>

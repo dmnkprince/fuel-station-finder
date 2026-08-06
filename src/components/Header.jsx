@@ -16,7 +16,7 @@ export default function Header() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex items-center gap-3">
+        <nav className="flex items-center gap-2 sm:gap-3">
           <Link
             to="/"
             id="nav-home"
@@ -25,6 +25,15 @@ export default function Header() {
             }`}
           >
             Map View
+          </Link>
+          <Link
+            to="/about"
+            id="nav-about"
+            className={`font-semibold text-sm px-2 py-1 rounded-lg transition-all ${
+              pathname === "/about" ? "text-slate-100 bg-slate-800" : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/60"
+            }`}
+          >
+            About
           </Link>
           <a
             id="nav-report"

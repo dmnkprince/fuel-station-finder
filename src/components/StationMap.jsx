@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import L from 'leaflet';
 import { upvoteReport } from '../services/api';
 import { getFuelDisplay, getDistance } from '../utils/constants';
+import { formatTimeAgo } from '../utils/formatTimeAgo';
 import 'leaflet/dist/leaflet.css';
 
 const STATUS_COLORS = {
@@ -23,14 +24,6 @@ const userLocationIcon = typeof window !== 'undefined' ? L.divIcon({
 
 function FlyToUser({ position, flyToSignal }) {
   const map = useMap();
-  const hasInitiallyFlown = useRef(false);
-
-  useEffect(() => {
-    if (position && !hasInitiallyFlown.current) {
-      map.flyTo(position, 14, { duration: 1.5 });
-      hasInitiallyFlown.current = true;
-    }
-  }, [position, map]);
 
   useEffect(() => {
     if (position && flyToSignal > 0) {
@@ -141,7 +134,7 @@ function MapPopupContent({ station, onUpvote, userPosition }) {
                 </span>
               </div>
               <div className="flex items-center justify-center py-1.5 px-1">
-                <span className="text-[9px] font-medium text-slate-400">{r.minutes_ago}m ago</span>
+                <span className="text-[9px] font-medium text-slate-400">{formatTimeAgo(r.minutes_ago)} ago</span>
               </div>
             </div>
           ))}
@@ -176,9 +169,9 @@ function MapPopupContent({ station, onUpvote, userPosition }) {
 }
 
 export default function StationMap({ stations, userPosition, flyToSignal, selectedStation, onMarkerClick, onUpvoteSuccess, onLocateUser }) {
-  // Default map view centered on Yenagoa, Bayelsa State
-  const defaultCenter = [4.927, 6.295];
-  const defaultZoom = 13;
+  // Default map view showing all of Nigeria
+  const defaultCenter = [9.05, 7.5];
+  const defaultZoom = 6;
 
   return (
     <div id="station-map-container" className="w-full h-full relative">

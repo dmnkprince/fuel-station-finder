@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { upvoteReport } from '../services/api';
 import { getFuelDisplay, getDistance } from '../utils/constants';
+import { formatTimeAgo } from '../utils/formatTimeAgo';
 
 const STATUS_CONFIG = {
   green:  { dot: 'bg-emerald-500 shadow-[0_0_8px_#10b981]',  label: 'In Stock',     emoji: '🟢', styleClass: 'bg-emerald-950/40 text-emerald-400 border-emerald-800/30' },
@@ -133,7 +134,7 @@ export default function StationCard({ station, onClick, isHighlighted, onUpvoteS
                 <span className="text-[10px] font-bold text-slate-200">{QUEUE_ICONS[r.queue_length] ?? r.queue_length}</span>
               </div>
               <div className="flex items-center justify-center py-1.5 px-1">
-                <span className="text-[10px] font-medium text-slate-400">{r.minutes_ago}m</span>
+                <span className="text-[10px] font-medium text-slate-400">{formatTimeAgo(r.minutes_ago)}</span>
               </div>
             </div>
           ))}
