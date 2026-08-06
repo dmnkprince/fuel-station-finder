@@ -5,6 +5,7 @@ import StationCard from '../components/StationCard';
 import SearchFilter from '../components/SearchFilter';
 import PriceReportModal from '../components/PriceReportModal';
 import { getFuelDisplay } from '../utils/constants';
+import { useGeolocation } from '../hooks/useGeolocation';
 
 const DEFAULT_FILTERS = { search: '', fuelType: 'All', status: 'All' };
 
@@ -12,11 +13,12 @@ export default function Home() {
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [userPosition, setUserPosition] = useState(null);
   const [selectedStation, setSelectedStation] = useState(null);
   const [reportStation, setReportStation] = useState(null);
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [toast, setToast] = useState('');
+
+  const { position: userPosition, error: geoError, recenter, flyToSignal } = useGeolocation();
 
   useEffect(() => {
     fetchStations()
@@ -31,27 +33,13 @@ export default function Home() {
   };
 
   const handleLocateUser = () => {
-    if (!navigator.geolocation) {
-      showToast('❌ Geolocation is not supported by your browser.');
-      return;
+    if (geoError) {
+      showToast(`⚠️ ${geoError}`);
+    } else {
+      showToast('📍 Map centered on your location.');
     }
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const pos2d = [pos.coords.latitude, pos.coords.longitude];
-        setUserPosition(pos2d);
-        // Persist so StationDetail can read it
-        localStorage.setItem('user_position', JSON.stringify(pos2d));
-        showToast('📍 Map centered on your location.');
-      },
-      () => {
-        showToast('⚠️ Could not fetch your location. Please check your permissions.');
-      }
-    );
+    recenter();
   };
-
-  useEffect(() => {
-    handleLocateUser();
-  }, []);
 
   const filteredStations = useMemo(() => {
     return stations.filter((s) => {
@@ -92,6 +80,7 @@ export default function Home() {
           <StationMap
             stations={filteredStations}
             userPosition={userPosition}
+            flyToSignal={flyToSignal}
             selectedStation={selectedStation}
             onMarkerClick={setSelectedStation}
             onUpvoteSuccess={() => fetchStations().then(setStations)}

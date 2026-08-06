@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { fetchStationById, upvoteReport } from '../services/api';
 import PriceReportModal from '../components/PriceReportModal';
 import { getFuelDisplay, getDistance } from '../utils/constants';
+import { useGeolocation } from '../hooks/useGeolocation';
 
 const STATUS_CONFIG = {
   green:  { label: 'In Stock',     emoji: '🟢', styleClass: 'bg-emerald-950/40 text-emerald-400 border-emerald-800/30' },
@@ -28,17 +29,12 @@ export default function StationDetail() {
   const [showModal, setShowModal] = useState(false);
   const [toast, setToast] = useState('');
   const [votedReportIds, setVotedReportIds] = useState([]);
-  const [userPosition, setUserPosition] = useState(null);
+
+  const { position: userPosition } = useGeolocation();
 
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem('upvoted_reports') || '[]');
     setVotedReportIds(saved);
-
-    // Read user position saved by Home page
-    const savedPos = localStorage.getItem('user_position');
-    if (savedPos) {
-      try { setUserPosition(JSON.parse(savedPos)); } catch { /* ignore */ }
-    }
   }, []);
 
   const loadStation = () => {

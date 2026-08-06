@@ -1,5 +1,5 @@
 import { MapContainer, TileLayer, CircleMarker, Marker, Popup, useMap } from 'react-leaflet';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import L from 'leaflet';
 import { upvoteReport } from '../services/api';
@@ -21,11 +21,23 @@ const userLocationIcon = typeof window !== 'undefined' ? L.divIcon({
   iconAnchor: [8, 8],
 }) : null;
 
-function FlyToUser({ position }) {
+function FlyToUser({ position, flyToSignal }) {
   const map = useMap();
+  const hasInitiallyFlown = useRef(false);
+
   useEffect(() => {
-    if (position) map.flyTo(position, 14, { duration: 1.5 });
+    if (position && !hasInitiallyFlown.current) {
+      map.flyTo(position, 14, { duration: 1.5 });
+      hasInitiallyFlown.current = true;
+    }
   }, [position, map]);
+
+  useEffect(() => {
+    if (position && flyToSignal > 0) {
+      map.flyTo(position, 14, { duration: 1.5 });
+    }
+  }, [flyToSignal, position, map]);
+
   return null;
 }
 
@@ -163,7 +175,7 @@ function MapPopupContent({ station, onUpvote, userPosition }) {
   );
 }
 
-export default function StationMap({ stations, userPosition, selectedStation, onMarkerClick, onUpvoteSuccess, onLocateUser }) {
+export default function StationMap({ stations, userPosition, flyToSignal, selectedStation, onMarkerClick, onUpvoteSuccess, onLocateUser }) {
   // Default map view centered on Yenagoa, Bayelsa State
   const defaultCenter = [4.927, 6.295];
   const defaultZoom = 13;
@@ -181,7 +193,7 @@ export default function StationMap({ stations, userPosition, selectedStation, on
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {userPosition && <FlyToUser position={userPosition} />}
+        {userPosition && <FlyToUser position={userPosition} flyToSignal={flyToSignal} />}
         {selectedStation && <FlyToStation station={selectedStation} />}
 
         {/* Pulsing GPS dot for user position */}
