@@ -37,15 +37,14 @@ const FooterSection = () => {
             FuelFinder
           </Link>
           . All rights reserved.
+          {/*    About link */}
+          <Link
+            to="/about"
+            className="text-xs font-semibold text-slate-400 hover:text-amber-500 transition-colors order-first sm:order-none"
+          >
+              About FuelFinder
+          </Link>
         </div>
-
-        {/* Center — About link */}
-        <Link
-          to="/about"
-          className="text-xs font-semibold text-slate-400 hover:text-amber-500 transition-colors order-first sm:order-none"
-        >
-          About FuelFinder
-        </Link>
 
         {/* Right side — designer credit + social links */}
         <div className="flex items-center gap-2 text-xs sm:text-sm">
