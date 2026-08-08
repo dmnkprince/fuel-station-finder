@@ -11,7 +11,7 @@ This project was built as a full-stack application under the **3 Million Technic
 - **Interactive Live Map**: Displays fuel stations across Nigeria with color-coded status circles reflecting real-time inventory.
 - **Crowdsourced Price & Availability Reports**: Community members submit current prices (Petrol, Diesel, Kerosene, Cooking Gas) and queue lengths.
 - **Verification System**: Endorse other users' updates with a quick upvote to establish trustworthiness.
-- **Smart Time Ago Formatting**: Displays updates using clean intervals (`Just now`, `45m`, `2h 15m`, `3d 5h`) instead of raw minutes.
+- **Smart Time Formatting**: Displays updates using clean intervals (`Just now`, `45m`, `2h 15m`, `3d 5h`) instead of raw minutes.
 - **Extended Freshness window**: Custom status updates (In Stock, No Stock, Queueing) stay active for up to **2 weeks** before turning stale (grey).
 - **Mobile-Responsive Footer**: Compact, fully functional footer featuring a dedicated About page and easy contact options via WhatsApp, GitHub, and LinkedIn.
 
