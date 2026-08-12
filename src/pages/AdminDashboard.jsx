@@ -256,7 +256,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Tabs Navigation */}
-      <div className="flex flex-wrap items-center gap-2 bg-slate-900/60 backdrop-blur-md p-1.5 rounded-2xl border border-slate-700/50 shadow-inner overflow-x-auto custom-scrollbar">
+      <div className="flex flex-wrap items-center gap-2 bg-slate-900/60 backdrop-blur-md p-1.5 rounded-2xl border border-slate-700/50 shadow-inner">
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -646,4 +646,50 @@ export default function AdminDashboard() {
                         </div>
                         <button
                           type="button"
-                          onClick={() => handleUnassignStation(s.id
+                          onClick={() => handleUnassignStation(s.id)}
+                          className="text-[10px] font-bold text-rose-400 hover:text-white border border-rose-500/30 hover:border-rose-500 hover:bg-rose-500 px-3 py-1.5 rounded-lg transition-all shrink-0 cursor-pointer shadow-sm opacity-80 hover:opacity-100"
+                        >
+                          Unlink
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Global CSS for animations and custom scrollbar */}
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes fadeInDown {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideUp {
+          from { opacity: 0; transform: scale(0.95) translateY(20px); }
+          to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        .animate-fade-in-down { animation: fadeInDown 0.3s ease-out forwards; }
+        .animate-slide-up { animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-fade-in { animation: fadeIn 0.2s ease-out forwards; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(71, 85, 105, 0.3); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(71, 85, 105, 0.6); }
+      `}} />
+
+      {toast && (
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-slate-900/90 backdrop-blur-md border border-amber-500/50 text-slate-100 text-sm font-bold px-6 py-3.5 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] z-[9999] flex items-center gap-3 animate-fade-in-down" style={{ animationDirection: 'reverse' /* visually slide up from bottom */}}>
+          <span className="text-amber-500">✨</span> {toast}
+        </div>
+      )}
+    </div>
+  );
+}
