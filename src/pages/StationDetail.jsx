@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { fetchStationById, upvoteReport } from '../services/api';
+import { fetchStationById, upvoteReport, downvoteReport } from '../services/api';
 import PriceReportModal from '../components/PriceReportModal';
 import { getFuelDisplay, getDistance } from '../utils/constants';
 import { useGeolocation } from '../hooks/useGeolocation';
+import { useAuth } from '../context/AuthContext';
 
 const STATUS_CONFIG = {
   green:  { label: 'In Stock',     emoji: '🟢', styleClass: 'bg-emerald-950/40 text-emerald-400 border-emerald-800/30' },
@@ -31,6 +32,8 @@ export default function StationDetail() {
   const [votedReportIds, setVotedReportIds] = useState([]);
 
   const { position: userPosition } = useGeolocation();
+  const { isAdmin, isManager } = useAuth();
+  const canSubmitReport = isAdmin || isManager;
 
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem('upvoted_reports') || '[]');
@@ -119,6 +122,15 @@ export default function StationDetail() {
                 📏 {distance} from your location
               </span>
             )}
+            {/* Get Directions */}
+            <a
+              href={`https://www.google.com/maps/dir/?api=1&destination=${station.latitude},${station.longitude}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 mt-2 text-xs font-bold text-sky-400 bg-sky-950/40 border border-sky-800/30 px-3 py-1.5 rounded-lg hover:bg-sky-900/40 transition-all"
+            >
+              🧭 Get Directions
+            </a>
           </div>
           <span className={`text-xs font-extrabold px-3.5 py-1 rounded-full border w-fit shrink-0 ${cfg.styleClass}`}>
             {cfg.emoji} {cfg.label}
@@ -149,13 +161,15 @@ export default function StationDetail() {
           </div>
         )}
 
-        <button
-          id="btn-open-report-modal"
-          className="w-full bg-amber-500 hover:bg-amber-600 active:scale-[0.98] text-slate-950 font-black text-sm py-3 rounded-lg transition-all shadow-lg shadow-amber-500/10"
-          onClick={() => setShowModal(true)}
-        >
-          📤 Submit New Price &amp; Queue Update
-        </button>
+        {canSubmitReport && (
+          <button
+            id="btn-open-report-modal"
+            className="w-full bg-amber-500 hover:bg-amber-600 active:scale-[0.98] text-slate-950 font-black text-sm py-3 rounded-lg transition-all shadow-lg shadow-amber-500/10"
+            onClick={() => setShowModal(true)}
+          >
+            📤 Submit New Price &amp; Queue Update
+          </button>
+        )}
       </div>
 
       {/* History Timeline */}
@@ -187,6 +201,11 @@ export default function StationDetail() {
                     ) : (
                       <span className="text-[10px] font-bold bg-rose-950/40 text-rose-400 border border-rose-800/30 px-2.5 py-0.5 rounded-full">❌ Out of Stock</span>
                     )}
+                    {r.is_official && (
+                      <span className="text-[9px] font-extrabold bg-emerald-950/60 text-emerald-400 border border-emerald-800/40 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                        ✅ Official
+                      </span>
+                    )}
                     {i === 0 && (
                       <span className="bg-amber-500/20 text-amber-500 border border-amber-500/20 text-[9px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider ml-auto">
                         Latest
@@ -204,18 +223,37 @@ export default function StationDetail() {
                     <span className="text-xs text-slate-500 font-bold flex items-center gap-1">
                       👍 <span className="text-slate-200 font-extrabold">{r.upvotes}</span> verifications
                     </span>
-                    <button
-                      id={`upvote-btn-${r.id}`}
-                      className={`text-xs font-extrabold px-3 sm:px-4 py-1.5 rounded-lg border transition-all ${
-                        isVoted
-                          ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/50 cursor-default'
-                          : 'bg-slate-800 text-slate-200 border-slate-700 hover:border-amber-500 hover:text-amber-500 active:scale-95'
-                      }`}
-                      onClick={() => handleUpvote(r.id)}
-                      disabled={isVoted}
-                    >
-                      {isVoted ? '✅ Verified' : '👍 Verify Update'}
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        id={`upvote-btn-${r.id}`}
+                        className={`text-xs font-extrabold px-3 sm:px-4 py-1.5 rounded-lg border transition-all ${
+                          isVoted
+                            ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/50 cursor-default'
+                            : 'bg-slate-800 text-slate-200 border-slate-700 hover:border-amber-500 hover:text-amber-500 active:scale-95'
+                        }`}
+                        onClick={() => handleUpvote(r.id)}
+                        disabled={isVoted}
+                      >
+                        {isVoted ? '✅ Verified' : '👍 Verify Update'}
+                      </button>
+                      <button
+                        id={`flag-btn-${r.id}`}
+                        className="text-xs font-extrabold px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800 text-slate-400 hover:border-rose-500 hover:text-rose-400 active:scale-95 transition-all"
+                        onClick={async () => {
+                          try {
+                            await downvoteReport(r.id);
+                            setToast('⚠️ Report flagged as inaccurate.');
+                            setTimeout(() => setToast(''), 3000);
+                            loadStation();
+                          } catch {
+                            setToast('❌ Failed to flag report.');
+                            setTimeout(() => setToast(''), 3000);
+                          }
+                        }}
+                      >
+                        🚩 Flag
+                      </button>
+                    </div>
                   </div>
                 </div>
               );

@@ -94,6 +94,11 @@ export default function StationCard({ station, onClick, isHighlighted, onUpvoteS
         <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border shrink-0 ${cfg.styleClass}`}>
           {cfg.emoji} {cfg.label}
         </span>
+        {report?.is_official && (
+          <span className="text-[9px] font-extrabold bg-emerald-950/60 text-emerald-400 border border-emerald-800/40 px-2 py-0.5 rounded-full uppercase tracking-wider">
+            ✅ Official
+          </span>
+        )}
       </div>
 
       {/* Main Info */}
@@ -172,6 +177,15 @@ export default function StationCard({ station, onClick, isHighlighted, onUpvoteS
           )}
         </div>
 
+        <a
+          href={`https://www.google.com/maps/dir/?api=1&destination=${station.latitude},${station.longitude}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[10px] font-bold text-sky-400 hover:text-sky-300 flex items-center gap-0.5 transition-all shrink-0"
+          onClick={(e) => e.stopPropagation()}
+        >
+          🧭 Directions
+        </a>
         <Link
           to={`/stations/${station.id}`}
           id={`view-details-${station.id}`}
