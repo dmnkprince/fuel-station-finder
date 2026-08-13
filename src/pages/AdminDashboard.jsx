@@ -304,11 +304,11 @@ export default function AdminDashboard() {
                 </button>
               </div>
             ) : (
-              <div className="flex flex-col gap-3 overflow-y-auto pr-2 max-h-[500px] z-10 custom-scrollbar">
+              <div className="flex flex-col gap-3 overflow-y-auto pr-2 max-h-125 z-10 custom-scrollbar">
                 {managers.map((m) => (
                   <div key={m.id} className="group flex items-center justify-between bg-slate-900/60 hover:bg-slate-800/80 border border-slate-700/40 hover:border-amber-500/30 rounded-xl px-5 py-4 transition-all duration-300 hover:shadow-lg cursor-default">
                     <div className="flex items-center gap-4 min-w-0">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center text-slate-300 font-black text-sm shrink-0 border border-slate-600/50 group-hover:border-amber-500/40 transition-colors">
+                      <div className="w-10 h-10 rounded-full bg-linear-to-br from-slate-700 to-slate-800 flex items-center justify-center text-slate-300 font-black text-sm shrink-0 border border-slate-600/50 group-hover:border-amber-500/40 transition-colors">
                         {m.name.charAt(0).toUpperCase()}
                       </div>
                       <div className="min-w-0">

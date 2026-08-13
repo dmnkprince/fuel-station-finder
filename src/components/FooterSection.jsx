@@ -40,7 +40,7 @@ const FooterSection = () => {
           {/*    About link */}
           <Link
             to="/about"
-            className="text-xs font-semibold text-slate-400 hover:text-amber-500 transition-colors order-first sm:order-none"
+            className="ml-6 text-xs font-semibold text-slate-400 hover:text-amber-500 transition-colors order-first sm:order-0"
           >
               About FuelFinder
           </Link>

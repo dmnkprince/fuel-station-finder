@@ -49,7 +49,7 @@ const TECH_STACK = [
   { name: 'Node.js', desc: 'Backend server' },
   { name: 'PostgreSQL', desc: 'Database' },
   { name: 'JWT', desc: 'Authentication' },
-  { name: 'Tailwind CSS', desc: 'Utility-first styling' },
+  { name: 'Tailwind CSS', desc: 'Styling' },
   { name: 'Vite', desc: 'Build tooling' },
 ];
 
@@ -73,17 +73,18 @@ export default function About() {
         <span className="text-5xl sm:text-6xl">⛽</span>
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-100 leading-tight">
           About{' '}
-          <span className="bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">
+          <span className="bg-linear-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">
             FuelFinder NG
           </span>
         </h1>
-        <p className="text-sm sm:text-base text-slate-400 max-w-2xl leading-relaxed font-medium">
+        <p className="text-sm sm:text-base text-slate-400 max-w-2xl leading-relaxed font-medium text-justify ">
           FuelFinder NG is a <strong className="text-slate-200">verified fuel station tracking platform</strong> built for Nigeria.
           In a country where fuel scarcity is a recurring challenge, we combine
           <strong className="text-emerald-400"> official station manager updates</strong> with{' '}
           <strong className="text-amber-400">community verification</strong> to provide
-          trustworthy, real-time information about fuel availability, prices, and queue lengths —
-          so you never have to drive blindly from station to station again.
+          trustworthy, real-time information about fuel availability, prices, and queue lengths 
+          so you never have to drive blindly from station to station again. This project, FuelFinder NG demonstrates full-stack web development
+          skills applied to solving a real-world Nigerian challenge.
         </p>
       </section>
 
@@ -168,7 +169,7 @@ export default function About() {
           {FEATURES.map((f) => (
             <div
               key={f.title}
-              className="bg-slate-900/60 border border-slate-800 rounded-xl p-4 flex flex-col gap-2 hover:border-amber-500/40 transition-all group"
+              className="bg-slate-900/60 border text-justify border-slate-800 rounded-xl p-4 flex flex-col gap-2 hover:border-amber-500/40 transition-all group"
             >
               <div className="flex items-center gap-2">
                 <span className="text-xl group-hover:scale-110 transition-transform">{f.emoji}</span>
@@ -199,18 +200,17 @@ export default function About() {
         </div>
       </section>
 
-      {/* 3MTT Section */}
-      <section className="bg-gradient-to-br from-amber-500/10 to-amber-600/5 border border-amber-500/20 rounded-2xl p-5 sm:p-8 flex flex-col gap-3 text-center items-center">
+      {/* 3MTT Section
+      <section className="bg-linear-to-br from-amber-500/10 to-amber-600/5 border border-amber-500/20 rounded-2xl p-5 sm:p-8 flex flex-col gap-3 text-center items-center">
         <span className="text-3xl">🎓</span>
         <h2 className="text-lg sm:text-xl font-black text-slate-100">3MTT Project</h2>
         <p className="text-sm text-slate-400 max-w-xl leading-relaxed font-medium">
           This project was built as part of Nigeria's{' '}
           <strong className="text-amber-500">3 Million Technical Talent (3MTT)</strong> initiative —
           a federal government programme aimed at building a critical mass of technical
-          talent across the country. FuelFinder NG demonstrates full-stack web development
-          skills applied to solving a real-world Nigerian challenge.
+          talent across the country. 
         </p>
-      </section>
+      </section> */}
 
       {/* CTA */}
       <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pb-4">

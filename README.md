@@ -1,6 +1,6 @@
-# FuelFinder NG 
+# FuelFinder NG
 
-**FuelFinder NG** is a **verified real-time fuel station tracking platform** built for Nigeria. It combines **official station manager updates** with **community verification** to provide trustworthy, up-to-date fuel availability, pricing, and queue information — so drivers never have to guess which station has fuel.
+**FuelFinder NG** is a **verified real-time fuel station tracking platform** built for Nigeria. It combines **official station manager updates** with **community verification** to provide trustworthy, up-to-date fuel availability, pricing, and queue information so drivers never have to guess which station has fuel.
 
 This project was built as a full-stack application under the **3 Million Technical Talent (3MTT)** initiative.
 
@@ -10,11 +10,11 @@ This project was built as a full-stack application under the **3 Million Technic
 
 FuelFinder NG uses a **Role-Based Access Control (RBAC)** model to ensure data accuracy:
 
-| Role | Permissions |
-|------|-------------|
-| **Admin** | Registers new fuel stations, assigns Station Managers |
+| Role                | Permissions                                                                                    |
+| ------------------- | ---------------------------------------------------------------------------------------------- |
+| **Admin**           | Registers new fuel stations, assigns Station Managers                                          |
 | **Station Manager** | Logs in to post **official** price, availability, and queue updates for their assigned station |
-| **Community User** | Views live map, **verifies** (upvotes) or **flags** (downvotes) reported updates |
+| **Community User**  | Views live map, **verifies** (upvotes) or **flags** (downvotes) reported updates               |
 
 ### How It Works
 
@@ -25,7 +25,7 @@ FuelFinder NG uses a **Role-Based Access Control (RBAC)** model to ensure data a
 
 ---
 
-##  Key Features
+## Key Features
 
 - **Interactive Live Map**: Displays fuel stations across Nigeria with color-coded status circles reflecting real-time inventory.
 - **Official Station Updates**: Station Managers post verified prices and availability — marked with an **Official ✅** badge.
@@ -40,24 +40,25 @@ FuelFinder NG uses a **Role-Based Access Control (RBAC)** model to ensure data a
 
 ---
 
-##  Status Colors
+## Status Colors
 
 - 🟢 **In Stock**: Fuel is available with short or normal queue conditions.
 - 🟡 **Queue**: Station is serving fuel, but lines are moderate to long.
 - 🔴 **Out of Stock**: No fuel is currently available at the station.
 - ⚪ **Stale Data**: No updates have been received in the last **24 hours**.
 
+## Queue System (shown with 🚗)
 
-##  Queue System (shown with 🚗)
-   🚗          ==> the queue is short.
-   🚗🚗        ==> the queue is moderate.
-   🚗🚗🚗     ==> the queue is long
+🚗 ==> the queue is short.
+🚗🚗 ==> the queue is moderate.
+🚗🚗🚗 ==> the queue is long
 
 ---
 
 ## Tech Stack
 
 ### Frontend
+
 - **Framework**: React 19 (built with Vite)
 - **Mapping**: Leaflet & React-Leaflet
 - **Styling**: Tailwind CSS 4
@@ -65,6 +66,7 @@ FuelFinder NG uses a **Role-Based Access Control (RBAC)** model to ensure data a
 - **Auth**: JWT token-based with React Context
 
 ### Backend
+
 - **Framework**: Node.js & Express
 - **Database**: PostgreSQL (pg-pool client)
 - **Authentication**: JWT (jsonwebtoken) + bcryptjs
@@ -76,6 +78,7 @@ FuelFinder NG uses a **Role-Based Access Control (RBAC)** model to ensure data a
 ## Directory Structure
 
 ### Frontend (`fuel-station-finder`)
+
 ```
 ├── public/
 │   └── img/                 # Static asset images (logos, etc.)
@@ -95,6 +98,7 @@ FuelFinder NG uses a **Role-Based Access Control (RBAC)** model to ensure data a
 ```
 
 ### Backend (`fuel-station-finder-server`)
+
 ```
 ├── config/                  # Database connections and environments
 ├── controllers/             # Request handlers (Auth, Stations & Report routes)
@@ -107,37 +111,39 @@ FuelFinder NG uses a **Role-Based Access Control (RBAC)** model to ensure data a
 └── package.json             # Backend dependency configurations
 ```
 
----
-
 ## API Endpoints
 
 ### Authentication
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| POST | `/api/auth/register` | Public | Create a new account |
-| POST | `/api/auth/login` | Public | Authenticate and receive JWT |
-| GET | `/api/auth/me` | Bearer | Get current user profile |
+
+| Method | Endpoint             | Auth   | Description                  |
+| ------ | -------------------- | ------ | ---------------------------- |
+| POST   | `/api/auth/register` | Public | Create a new account         |
+| POST   | `/api/auth/login`    | Public | Authenticate and receive JWT |
+| GET    | `/api/auth/me`       | Bearer | Get current user profile     |
 
 ### Stations
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| GET | `/api/stations` | Public | Fetch all stations with latest report |
-| GET | `/api/stations/:id` | Public | Fetch station with full report history |
-| POST | `/api/stations` | Admin | Register a new fuel station |
-| PATCH | `/api/stations/:id/assign-manager` | Admin | Assign a Station Manager |
+
+| Method | Endpoint                           | Auth   | Description                            |
+| ------ | ---------------------------------- | ------ | -------------------------------------- |
+| GET    | `/api/stations`                    | Public | Fetch all stations with latest report  |
+| GET    | `/api/stations/:id`                | Public | Fetch station with full report history |
+| POST   | `/api/stations`                    | Admin  | Register a new fuel station            |
+| PATCH  | `/api/stations/:id/assign-manager` | Admin  | Assign a Station Manager               |
 
 ### Reports
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| POST | `/api/reports` | Public* | Submit a price/availability report |
-| PATCH | `/api/reports/:id/upvote` | Public | Verify/upvote a report |
-| PATCH | `/api/reports/:id/downvote` | Public | Flag a report as inaccurate |
 
-> *Reports submitted by authenticated Station Managers for their assigned station are automatically marked as **Official**.
+| Method | Endpoint                    | Auth     | Description                        |
+| ------ | --------------------------- | -------- | ---------------------------------- |
+| POST   | `/api/reports`              | Public\* | Submit a price/availability report |
+| PATCH  | `/api/reports/:id/upvote`   | Public   | Verify/upvote a report             |
+| PATCH  | `/api/reports/:id/downvote` | Public   | Flag a report as inaccurate        |
+
+> \*Reports submitted by authenticated Station Managers for their assigned station are automatically marked as **Official**.
 
 ---
 
 ## 🌎 Deployment
-- Both front end and Back end were deployed using Render 
-- 1. https://fuel-station-finder.onrender.com (Front end deployed as a Static site)
-- 2. https://fuel-station-api-if7v.onrender.com  (Backend API deployed as a web service)
+
+- Both front end and Back end were deployed using Render
+- 1. https://fuel-station-finder.onrender.com (Front end deployed as a Static website)
+- 2. https://fuel-station-api-if7v.onrender.com (Backend API deployed as a web service)
