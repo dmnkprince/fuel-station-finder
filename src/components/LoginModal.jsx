@@ -88,12 +88,12 @@ export default function LoginModal({ onClose, onSwitchToRegister }) {
             {loading ? 'Signing in…' : '🔑 Sign In'}
           </button>
 
-          <p className="text-xs text-slate-500 text-center font-medium">
+          {/* <p className="text-xs text-slate-500 text-center font-medium">
             Don't have an account?{' '}
             <button type="button" className="text-amber-500 hover:text-amber-400 font-bold" onClick={onSwitchToRegister}>
               Register
             </button>
-          </p>
+          </p> */}
         </form>
       </div>
     </div>

@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import LoginModal from './LoginModal';
 import RegisterModal from './RegisterModal';
 
 export default function Header() {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const { user, isAuthenticated, isAdmin, isManager, logout } = useAuth();
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
@@ -79,9 +80,14 @@ export default function Header() {
                         ⛽ Station Dashboard
                       </Link>
                     )}
-                    <button
+                      <button
                       className="w-full text-left px-3 py-2 text-xs font-bold text-rose-400 hover:bg-rose-950/30 transition-all"
-                      onClick={() => { logout(); setShowUserMenu(false); }}
+                      onClick={() => { 
+                        logout(); 
+                        setShowUserMenu(false); 
+                        navigate('/');
+                        setShowLogin(true);
+                      }}
                     >
                       🚪 Sign Out
                     </button>
