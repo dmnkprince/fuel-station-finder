@@ -24,10 +24,12 @@ const userLocationIcon = typeof window !== 'undefined' ? L.divIcon({
 
 function FlyToUser({ position, flyToSignal }) {
   const map = useMap();
+  const prevSignal = useRef(0);
 
   useEffect(() => {
-    if (position && flyToSignal > 0) {
+    if (position && flyToSignal > prevSignal.current) {
       map.flyTo(position, 14, { duration: 1.5 });
+      prevSignal.current = flyToSignal;
     }
   }, [flyToSignal, position, map]);
 
