@@ -28,45 +28,40 @@ export default function SearchFilter({ filters, onChange }) {
         />
       </div>
 
-      {/* Fuel Type Filters */}
-      <div className="flex flex-col gap-1.5">
-        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Fuel Type</span>
-        <div className="flex flex-wrap gap-1.5">
-          {FUEL_TYPES.map((f) => (
-            <button
-              key={f}
-              id={`filter-fuel-${f.replace(/\s+/g, '-')}`}
-              className={`px-3 py-1 rounded-full text-xs font-semibold border transition-all ${
-                filters.fuelType === f
-                  ? 'bg-amber-500 border-amber-500 text-slate-950 shadow-md shadow-amber-500/10'
-                  : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-amber-500/40 hover:text-amber-500'
-              }`}
-              onClick={() => set('fuelType', f)}
-            >
-              {f === 'All' ? '🌐 All' : f}
-            </button>
-          ))}
+      {/* Filters (Dropdowns) */}
+      <div className="flex flex-row gap-3">
+        {/* Fuel Type Filter */}
+        <div className="flex flex-col gap-1.5 flex-1">
+          <label htmlFor="filter-fuel" className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Fuel Type</label>
+          <select
+            id="filter-fuel"
+            className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-slate-100 text-sm font-medium outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all cursor-pointer"
+            value={filters.fuelType}
+            onChange={(e) => set('fuelType', e.target.value)}
+          >
+            {FUEL_TYPES.map((f) => (
+              <option key={f} value={f}>
+                {f === 'All' ? '🌐 All' : f}
+              </option>
+            ))}
+          </select>
         </div>
-      </div>
 
-      {/* Status Filters */}
-      <div className="flex flex-col gap-1.5">
-        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Status</span>
-        <div className="flex flex-wrap gap-1.5">
-          {STATUSES.map((s) => (
-            <button
-              key={s}
-              id={`filter-status-${s}`}
-              className={`px-3 py-1 rounded-full text-xs font-semibold border transition-all ${
-                filters.status === s
-                  ? 'bg-amber-500 border-amber-500 text-slate-950 shadow-md'
-                  : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-amber-500/40 hover:text-amber-500'
-              }`}
-              onClick={() => set('status', s)}
-            >
-              {s === 'All' ? '🌐 All' : STATUS_LABELS[s]}
-            </button>
-          ))}
+        {/* Status Filter */}
+        <div className="flex flex-col gap-1.5 flex-1">
+          <label htmlFor="filter-status" className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Status</label>
+          <select
+            id="filter-status"
+            className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-slate-100 text-sm font-medium outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all cursor-pointer"
+            value={filters.status}
+            onChange={(e) => set('status', e.target.value)}
+          >
+            {STATUSES.map((s) => (
+              <option key={s} value={s}>
+                {s === 'All' ? '🌐 All' : STATUS_LABELS[s]}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
     </div>
