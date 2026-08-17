@@ -39,7 +39,7 @@ export default function LoginModal({ onClose, onSwitchToRegister }) {
         role="dialog"
         aria-modal="true"
       >
-        {/* Header */}
+        {/* Hedfddader */}
         <div className="flex items-center justify-between p-6 border-b border-slate-800">
           <div>
             <h2 className="text-lg font-black text-slate-100">Welcome Back</h2>
