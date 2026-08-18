@@ -10,7 +10,6 @@ const STATUS_CONFIG = {
   green:  { label: 'In Stock',     emoji: '🟢', styleClass: 'bg-emerald-950/40 text-emerald-400 border-emerald-800/30' },
   yellow: { label: 'Long Queue',   emoji: '🟡', styleClass: 'bg-amber-950/40 text-amber-400 border-amber-800/30' },
   red:    { label: 'Out of Stock', emoji: '🔴', styleClass: 'bg-rose-950/40 text-rose-400 border-rose-800/30' },
-  grey:   { label: 'Stale Data',   emoji: '⚪', styleClass: 'bg-slate-900 text-slate-400 border-slate-800' },
 };
 
 function formatTime(dateStr) {
@@ -86,7 +85,7 @@ export default function StationDetail() {
     );
   }
 
-  const cfg = STATUS_CONFIG[station.status] ?? STATUS_CONFIG.grey;
+  const cfg = STATUS_CONFIG[station.status] ?? STATUS_CONFIG.red;
   const latestReport = station.reports?.[0];
 
   // Distance from user to this station

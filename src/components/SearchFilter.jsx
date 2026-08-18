@@ -1,13 +1,12 @@
 // import { getFuelDisplay } from '../utils/constants';
 
 const FUEL_TYPES = ['All', 'Petrol', 'Diesel', 'Kerosene', 'Cooking Gas'];
-const STATUSES = ['All', 'green', 'yellow', 'red', 'grey'];
+const STATUSES = ['All', 'green', 'yellow', 'red'];
 
 const STATUS_LABELS = {
   green: '🟢 In Stock',
   yellow: '🟡 Queue',
   red: '🔴 No Stock',
-  grey: '⚪ Stale',
 };
 
 export default function SearchFilter({ filters, onChange }) {

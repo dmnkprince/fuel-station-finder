@@ -123,8 +123,7 @@ export default function About() {
               <strong className="text-slate-200">Everyone benefits.</strong>{' '}
               The map shows color-coded stations — <span className="text-emerald-400 font-bold">green</span> for in stock,{' '}
               <span className="text-amber-400 font-bold">yellow</span> for long queues,{' '}
-              <span className="text-rose-400 font-bold">red</span> for out of stock, and{' '}
-              <span className="text-slate-400 font-bold">grey</span> for stale data (no updates in the last 24 hours).
+              <span className="text-rose-400 font-bold">red</span> for out of stock.
             </p>
           </div>
         </div>

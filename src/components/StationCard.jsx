@@ -8,13 +8,12 @@ const STATUS_CONFIG = {
   green:  { dot: 'bg-emerald-500 shadow-[0_0_8px_#10b981]',  label: 'In Stock',     emoji: '🟢', styleClass: 'bg-emerald-950/40 text-emerald-400 border-emerald-800/30' },
   yellow: { dot: 'bg-amber-500 shadow-[0_0_8px_#f59e0b]',    label: 'Long Queue',   emoji: '🟡', styleClass: 'bg-amber-950/40 text-amber-400 border-amber-800/30' },
   red:    { dot: 'bg-rose-500 shadow-[0_0_8px_#f43f5e]',      label: 'Out of Stock', emoji: '🔴', styleClass: 'bg-rose-950/40 text-rose-400 border-rose-800/30' },
-  grey:   { dot: 'bg-slate-500',                              label: 'Stale Data',   emoji: '⚪', styleClass: 'bg-slate-900 text-slate-400 border-slate-800' },
 };
 
 const QUEUE_ICONS = { None: '—', Short: '🚗', Moderate: '🚗🚗', Long: '🚗🚗🚗' };
 
 export default function StationCard({ station, onClick, isHighlighted, onUpvoteSuccess, userPosition }) {
-  const cfg = STATUS_CONFIG[station.status] ?? STATUS_CONFIG.grey;
+  const cfg = STATUS_CONFIG[station.status] ?? STATUS_CONFIG.red;
   const report = station.latest_report;
 
   const [upvotes, setUpvotes] = useState(report?.upvotes ?? 0);

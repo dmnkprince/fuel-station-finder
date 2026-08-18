@@ -11,7 +11,6 @@ const STATUS_COLORS = {
   green:  { color: '#10b981', fillColor: '#059669' },
   yellow: { color: '#f59e0b', fillColor: '#d97706' },
   red:    { color: '#f43f5e', fillColor: '#e11d48' },
-  grey:   { color: '#64748b', fillColor: '#475569' },
 };
 
 // Custom Leaflet DivIcon for pulsing user GPS dot
@@ -204,7 +203,7 @@ export default function StationMap({ stations, userPosition, flyToSignal, select
         )}
 
         {stations.map((station) => {
-          const colors = STATUS_COLORS[station.status] ?? STATUS_COLORS.grey;
+          const colors = STATUS_COLORS[station.status] ?? STATUS_COLORS.red;
 
           return (
             <CircleMarker
