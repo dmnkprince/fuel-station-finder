@@ -45,7 +45,7 @@ FuelFinder NG uses a **Role-Based Access Control (RBAC)** model to ensure data a
 - 🟢 **In Stock**: Fuel is available with short or normal queue conditions.
 - 🟡 **Queue**: Station is serving fuel, but lines are moderate to long.
 - 🔴 **Out of Stock**: No fuel is currently available at the station.
-- ⚪ **Stale Data**: No updates have been received in the last **24 hours**.
+
 
 ## Queue System (shown with 🚗)
 
