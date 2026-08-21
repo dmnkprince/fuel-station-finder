@@ -1,43 +1,44 @@
 import { Link } from "react-router-dom";
+import { Map, CheckCircle2, Coins, Car, ShieldCheck, Fuel, MapPin, Lock, Settings, Shield, User, Sparkles, Wrench } from 'lucide-react';
 
 const FEATURES = [
   {
-    emoji: "🗺️",
+    icon: Map,
     title: "Live Map",
     desc: "Interactive map showing every fuel station near you with real-time status indicators.",
   },
   {
-    emoji: "✅",
+    icon: CheckCircle2,
     title: "Official Updates",
     desc: "Station Managers post verified prices and availability marked with an Official badge you can trust.",
   },
   {
-    emoji: "💰",
+    icon: Coins,
     title: "Price Reports",
     desc: "See current prices per litre from official station updates and community reports before driving.",
   },
   {
-    emoji: "🚗",
+    icon: Car,
     title: "Queue Tracking",
     desc: "See queue lengths at each station, skip the long lines and save hours of waiting.",
   },
   {
-    emoji: "🛡️",
+    icon: ShieldCheck,
     title: "Verification & Flagging",
     desc: "Verify accurate reports with an upvote, or flag inaccurate ones to protect fellow drivers.",
   },
   {
-    emoji: "⛽",
+    icon: Fuel,
     title: "Multi-Fuel Support",
     desc: "Track Petrol (PMS), Diesel (AGO), Kerosene (DPK), and Cooking Gas (LPG) availability.",
   },
   {
-    emoji: "📍",
+    icon: MapPin,
     title: "Distance & Directions",
     desc: "See how far each station is from your GPS location, with one-tap Google Maps navigation.",
   },
   {
-    emoji: "🔐",
+    icon: Lock,
     title: "Role-Based Access",
     desc: "Admins register stations, Station Managers post official updates, and users verify data accuracy.",
   },
@@ -70,7 +71,7 @@ export default function About() {
 
       {/* Hero Section */}
       <section className="text-center flex flex-col items-center gap-4">
-        <span className="text-5xl sm:text-6xl">⛽</span>
+        <Fuel className="w-12 h-12 sm:w-14 sm:h-14 text-amber-500" />
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-100 leading-tight">
           About{" "}
           <span className="bg-linear-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">
@@ -101,7 +102,7 @@ export default function About() {
       {/* How It Works */}
       <section className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 sm:p-8 flex flex-col gap-5 backdrop-blur-sm">
         <h2 className="text-lg sm:text-xl font-black text-slate-100 flex items-center gap-2">
-          <span className="text-amber-500">⚙️</span> How It Works
+          <Settings className="w-5 h-5 text-amber-500" /> How It Works
         </h2>
         <div className="flex flex-col gap-4 text-sm text-slate-400 leading-relaxed font-medium">
           <div className="flex gap-3 items-start">
@@ -130,7 +131,7 @@ export default function About() {
               fuel type, current price per litre, availability status, and queue
               length. These updates display an{" "}
               <span className="text-emerald-400 font-bold"> Official</span>{" "}
-              badge with the ✅ beside it.
+              badge with a checkmark beside it.
             </p>
           </div>
           <div className="flex gap-3 items-start">
@@ -165,11 +166,11 @@ export default function About() {
       {/* User Roles */}
       <section className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 sm:p-8 flex flex-col gap-5 backdrop-blur-sm">
         <h2 className="text-lg sm:text-xl font-black text-slate-100 flex items-center gap-2">
-          <span className="text-amber-500">🔐</span> User Roles
+          <Lock className="w-5 h-5 text-amber-500" /> User Roles
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="bg-slate-950/60 border border-slate-800 rounded-xl p-4 flex flex-col gap-2">
-            <span className="text-2xl">🛡️</span>
+            <Shield className="w-6 h-6 text-amber-500" />
             <h3 className="text-sm font-black text-slate-100">Admin</h3>
             <p className="text-xs text-slate-400 leading-relaxed font-medium">
               Registers new fuel stations on the platform and assigns Station
@@ -177,18 +178,18 @@ export default function About() {
             </p>
           </div>
           <div className="bg-slate-950/60 border border-amber-500/20 rounded-xl p-4 flex flex-col gap-2">
-            <span className="text-2xl">⛽</span>
+            <Fuel className="w-6 h-6 text-amber-500" />
             <h3 className="text-sm font-black text-slate-100">
               Station Manager
             </h3>
             <p className="text-xs text-slate-400 leading-relaxed font-medium">
               Logs in to post official price, availability, and queue updates.
               Updates are badged as{" "}
-              <span className="text-emerald-400 font-bold">✅ Official</span>.
+              <span className="text-emerald-400 font-bold inline-flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 inline" /> Official</span>.
             </p>
           </div>
           <div className="bg-slate-950/60 border border-slate-800 rounded-xl p-4 flex flex-col gap-2">
-            <span className="text-2xl">👤</span>
+            <User className="w-6 h-6 text-amber-500" />
             <h3 className="text-sm font-black text-slate-100">
               Community User
             </h3>
@@ -203,32 +204,33 @@ export default function About() {
       {/* Features Grid */}
       <section className="flex flex-col gap-5">
         <h2 className="text-lg sm:text-xl font-black text-slate-100 flex items-center gap-2">
-          <span className="text-amber-500">✨</span> Key Features
+          <Sparkles className="w-5 h-5 text-amber-500" /> Key Features
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          {FEATURES.map((f) => (
-            <div
-              key={f.title}
-              className="bg-slate-900/60 border text-justify border-slate-800 rounded-xl p-4 flex flex-col gap-2 hover:border-amber-500/40 transition-all group"
-            >
-              <div className="flex items-center gap-2">
-                <span className="text-xl group-hover:scale-110 transition-transform">
-                  {f.emoji}
-                </span>
-                <h3 className="text-sm font-black text-slate-100">{f.title}</h3>
+          {FEATURES.map((f) => {
+            const FeatureIcon = f.icon;
+            return (
+              <div
+                key={f.title}
+                className="bg-slate-900/60 border text-justify border-slate-800 rounded-xl p-4 flex flex-col gap-2 hover:border-amber-500/40 transition-all group"
+              >
+                <div className="flex items-center gap-2">
+                  <FeatureIcon className="w-5 h-5 text-amber-500 group-hover:scale-110 transition-transform shrink-0" />
+                  <h3 className="text-sm font-black text-slate-100">{f.title}</h3>
+                </div>
+                <p className="text-xs text-slate-400 leading-relaxed font-medium">
+                  {f.desc}
+                </p>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed font-medium">
-                {f.desc}
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
       {/* Tech Stack */}
       <section className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 sm:p-8 flex flex-col gap-5 backdrop-blur-sm">
         <h2 className="text-lg sm:text-xl font-black text-slate-100 flex items-center gap-2">
-          <span className="text-amber-500">🛠️</span> Built With
+          <Wrench className="w-5 h-5 text-amber-500" /> Built With
         </h2>
         <div className="flex flex-wrap gap-2.5">
           {TECH_STACK.map((t) => (
@@ -249,7 +251,7 @@ export default function About() {
 
       {/* 3MTT Section
       <section className="bg-linear-to-br from-amber-500/10 to-amber-600/5 border border-amber-500/20 rounded-2xl p-5 sm:p-8 flex flex-col gap-3 text-center items-center">
-        <span className="text-3xl">🎓</span>
+        <GraduationCap className="w-8 h-8 text-amber-500" />
         <h2 className="text-lg sm:text-xl font-black text-slate-100">3MTT Project</h2>
         <p className="text-sm text-slate-400 max-w-xl leading-relaxed font-medium">
           This project was built as part of Nigeria's{' '}
@@ -263,9 +265,9 @@ export default function About() {
       <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pb-4">
         <Link
           to="/"
-          className="bg-amber-500 hover:bg-amber-600 active:scale-95 text-slate-950 font-black text-sm px-6 py-3 rounded-lg transition-all shadow-lg shadow-amber-500/20"
+          className="bg-amber-500 hover:bg-amber-600 active:scale-95 text-slate-950 font-black text-sm px-6 py-3 rounded-lg transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2"
         >
-          🗺️ Open the Map
+          <Map className="w-4 h-4" /> Open the Map
         </Link>
         <a
           href="https://github.com/dmnkprince"

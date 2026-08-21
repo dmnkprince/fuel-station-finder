@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import LoginModal from './LoginModal';
 import RegisterModal from './RegisterModal';
+import { Shield, Fuel, LogOut } from 'lucide-react';
 
 export default function Header() {
   const { pathname } = useLocation();
@@ -71,17 +72,17 @@ export default function Header() {
                       </span>
                     </div>
                     {isAdmin && (
-                      <Link to="/admin" className="block px-3 py-2 text-xs font-bold text-slate-300 hover:bg-slate-800 transition-all" onClick={() => setShowUserMenu(false)}>
-                        🛡️ Admin Dashboard
+                      <Link to="/admin" className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-slate-300 hover:bg-slate-800 transition-all" onClick={() => setShowUserMenu(false)}>
+                        <Shield className="w-3.5 h-3.5 text-slate-400" /> Admin Dashboard
                       </Link>
                     )}
                     {isManager && (
-                      <Link to="/manager" className="block px-3 py-2 text-xs font-bold text-slate-300 hover:bg-slate-800 transition-all" onClick={() => setShowUserMenu(false)}>
-                        ⛽ Station Dashboard
+                      <Link to="/manager" className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-slate-300 hover:bg-slate-800 transition-all" onClick={() => setShowUserMenu(false)}>
+                        <Fuel className="w-3.5 h-3.5 text-slate-400" /> Station Dashboard
                       </Link>
                     )}
-                      <button
-                      className="w-full text-left px-3 py-2 text-xs font-bold text-rose-400 hover:bg-rose-950/30 transition-all"
+                    <button
+                      className="w-full flex items-center gap-2 text-left px-3 py-2 text-xs font-bold text-rose-400 hover:bg-rose-950/30 transition-all cursor-pointer"
                       onClick={() => { 
                         logout(); 
                         setShowUserMenu(false); 
@@ -89,7 +90,7 @@ export default function Header() {
                         setShowLogin(true);
                       }}
                     >
-                      🚪 Sign Out
+                      <LogOut className="w-3.5 h-3.5 text-rose-400" /> Sign Out
                     </button>
                   </div>
                 )}

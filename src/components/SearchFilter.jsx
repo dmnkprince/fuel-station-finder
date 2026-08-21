@@ -1,12 +1,12 @@
-// import { getFuelDisplay } from '../utils/constants';
+import { Search } from 'lucide-react';
 
 const FUEL_TYPES = ['All', 'Petrol', 'Diesel', 'Kerosene', 'Cooking Gas'];
 const STATUSES = ['All', 'green', 'yellow', 'red'];
 
 const STATUS_LABELS = {
-  green: '🟢 In Stock',
-  yellow: '🟡 Queue',
-  red: '🔴 No Stock',
+  green: 'In Stock',
+  yellow: 'Long Queue',
+  red: 'Out of Stock',
 };
 
 export default function SearchFilter({ filters, onChange }) {
@@ -16,7 +16,7 @@ export default function SearchFilter({ filters, onChange }) {
     <div id="search-filter" className="p-4 bg-slate-900 border-b border-slate-800 flex flex-col gap-3 shrink-0">
       {/* Search Input */}
       <div className="relative flex items-center">
-        <span className="absolute left-3 text-slate-500 text-sm pointer-events-none">🔍</span>
+        <Search className="absolute left-3 text-slate-500 w-4 h-4 pointer-events-none" />
         <input
           id="filter-search-input"
           type="text"
@@ -40,7 +40,7 @@ export default function SearchFilter({ filters, onChange }) {
           >
             {FUEL_TYPES.map((f) => (
               <option key={f} value={f}>
-                {f === 'All' ? '🌐 All' : f}
+                {f === 'All' ? 'All' : f}
               </option>
             ))}
           </select>
@@ -57,7 +57,7 @@ export default function SearchFilter({ filters, onChange }) {
           >
             {STATUSES.map((s) => (
               <option key={s} value={s}>
-                {s === 'All' ? '🌐 All' : STATUS_LABELS[s]}
+                {s === 'All' ? 'All' : STATUS_LABELS[s]}
               </option>
             ))}
           </select>

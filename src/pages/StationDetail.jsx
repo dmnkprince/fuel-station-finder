@@ -1,15 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { fetchStationById, upvoteReport, downvoteReport } from '../services/api';
 import PriceReportModal from '../components/PriceReportModal';
 import { getFuelDisplay, getDistance } from '../utils/constants';
 import { useGeolocation } from '../hooks/useGeolocation';
 import { useAuth } from '../context/AuthContext';
+import { CheckCircle2, Clock, AlertTriangle, MapPin, Navigation, Compass, ThumbsUp, Send, FileText, XCircle, ShieldCheck, Car, Coins } from 'lucide-react';
 
 const STATUS_CONFIG = {
-  green:  { label: 'In Stock',     emoji: '🟢', styleClass: 'bg-emerald-950/40 text-emerald-400 border-emerald-800/30' },
-  yellow: { label: 'Long Queue',   emoji: '🟡', styleClass: 'bg-amber-950/40 text-amber-400 border-amber-800/30' },
-  red:    { label: 'Out of Stock', emoji: '🔴', styleClass: 'bg-rose-950/40 text-rose-400 border-rose-800/30' },
+  green:  { label: 'In Stock',     icon: CheckCircle2, styleClass: 'bg-emerald-950/40 text-emerald-400 border-emerald-800/30' },
+  yellow: { label: 'Long Queue',   icon: Clock, styleClass: 'bg-amber-950/40 text-amber-400 border-amber-800/30' },
+  red:    { label: 'Out of Stock', icon: AlertTriangle, styleClass: 'bg-rose-950/40 text-rose-400 border-rose-800/30' },
 };
 
 function formatTime(dateStr) {
@@ -27,27 +28,38 @@ export default function StationDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [toast, setToast] = useState('');
-  const [votedReportIds, setVotedReportIds] = useState([]);
+  const [toast, setToast] = useState(null);
+  const [votedReportIds, setVotedReportIds] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('upvoted_reports') || '[]');
+    } catch {
+      return [];
+    }
+  });
 
   const { position: userPosition } = useGeolocation();
   const { isAdmin, isManager } = useAuth();
   const canSubmitReport = isAdmin || isManager;
 
-  useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('upvoted_reports') || '[]');
-    setVotedReportIds(saved);
-  }, []);
+  const showToast = (msg, type = 'success') => {
+    setToast({ message: msg, type });
+    setTimeout(() => setToast(null), 3000);
+  };
 
-  const loadStation = () => {
+  const loadStation = useCallback(() => {
     setLoading(true);
     fetchStationById(id)
       .then(setStation)
       .catch(() => setError('Station not found or server unavailable.'))
       .finally(() => setLoading(false));
-  };
+  }, [id]);
 
-  useEffect(() => { loadStation(); }, [id]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      loadStation();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [loadStation]);
 
   const handleUpvote = async (reportId) => {
     if (votedReportIds.includes(reportId)) return;
@@ -58,12 +70,10 @@ export default function StationDetail() {
       setVotedReportIds(updated);
       localStorage.setItem('upvoted_reports', JSON.stringify(updated));
 
-      setToast('👍 Price update verified! Thank you for helping drivers.');
-      setTimeout(() => setToast(''), 3000);
+      showToast('Price update verified! Thank you for helping drivers.', 'success');
       loadStation();
     } catch {
-      setToast('⚠️ Failed to verify price update.');
-      setTimeout(() => setToast(''), 3000);
+      showToast('Failed to verify price update.', 'error');
     }
   };
 
@@ -79,7 +89,10 @@ export default function StationDetail() {
   if (error || !station) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center gap-4 text-slate-500 p-6 text-center">
-        <p className="text-base font-bold text-rose-500">⚠️ {error || 'Station not found.'}</p>
+        <p className="text-base font-bold text-rose-500 flex items-center gap-2">
+          <AlertTriangle className="w-5 h-5 text-rose-500" />
+          {error || 'Station not found.'}
+        </p>
         <Link to="/" className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs px-4 py-2.5 rounded-lg shadow-lg">← Back to Map</Link>
       </div>
     );
@@ -110,15 +123,15 @@ export default function StationDetail() {
             <h1 id="station-detail-name" className="text-lg sm:text-xl md:text-2xl font-black text-slate-100 leading-tight">
               {station.name}
             </h1>
-            <p className="text-xs md:text-sm text-slate-500 mt-1.5 flex items-center gap-1">
-              <span className="text-base shrink-0">📍</span>
+            <p className="text-xs md:text-sm text-slate-500 mt-1.5 flex items-center gap-1.5">
+              <MapPin className="w-4 h-4 text-slate-500 shrink-0" />
               <span className="truncate">{station.address}</span>
             </p>
 
             {/* Distance badge */}
             {distance && (
-              <span className="inline-flex items-center gap-1 mt-2 text-[10px] font-bold text-sky-400 bg-sky-950/40 border border-sky-800/30 px-2.5 py-0.5 rounded-full">
-                📏 {distance} from your location
+              <span className="inline-flex items-center gap-1.5 mt-2 text-[10px] font-bold text-sky-400 bg-sky-950/40 border border-sky-800/30 px-2.5 py-0.5 rounded-full">
+                <Compass className="w-3.5 h-3.5 text-sky-400" /> {distance} from your location
               </span>
             )}
             {/* Get Directions */}
@@ -126,19 +139,23 @@ export default function StationDetail() {
               href={`https://www.google.com/maps/dir/?api=1&destination=${station.latitude},${station.longitude}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 mt-2 text-xs font-bold text-sky-400 bg-sky-950/40 border border-sky-800/30 px-3 py-1.5 rounded-lg hover:bg-sky-900/40 transition-all"
+              className="inline-flex items-center gap-1.5 mt-2 text-xs font-bold text-sky-400 bg-sky-950/40 border border-sky-800/30 px-3 py-1.5 rounded-lg hover:bg-sky-900/40 transition-all cursor-pointer"
             >
-              🧭 Get Directions
+              <Navigation className="w-3.5 h-3.5 text-sky-450" /> Get Directions
             </a>
           </div>
-          <span className={`text-xs font-extrabold px-3.5 py-1 rounded-full border w-fit shrink-0 ${cfg.styleClass}`}>
-            {cfg.emoji} {cfg.label}
+          <span className={`text-xs font-extrabold px-3.5 py-1 rounded-full border w-fit shrink-0 flex items-center gap-1.5 ${cfg.styleClass}`}>
+            {(() => {
+              const StatusIcon = cfg.icon;
+              return <StatusIcon className="w-3.5 h-3.5 shrink-0" />;
+            })()}
+            {cfg.label}
           </span>
         </div>
 
         {/* Latest report summary */}
         {latestReport && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 bg-slate-950/60 border border-slate-950 rounded-xl p-3 sm:p-4 text-center">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 bg-slate-955/60 border border-slate-950 rounded-xl p-3 sm:p-4 text-center">
             <div className="flex flex-col items-center gap-1">
               <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Fuel Type</span>
               <span className="text-xs font-black text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded">{getFuelDisplay(latestReport.fuel_type)}</span>
@@ -155,7 +172,10 @@ export default function StationDetail() {
             </div>
             <div className="flex flex-col items-center gap-1">
               <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Verifications</span>
-              <span className="text-sm font-extrabold text-slate-300">👍 {latestReport.upvotes}</span>
+              <span className="text-sm font-extrabold text-slate-300 flex items-center justify-center gap-1">
+                <ThumbsUp className="w-3.5 h-3.5 text-slate-400" />
+                {latestReport.upvotes}
+              </span>
             </div>
           </div>
         )}
@@ -163,10 +183,10 @@ export default function StationDetail() {
         {canSubmitReport && (
           <button
             id="btn-open-report-modal"
-            className="w-full bg-amber-500 hover:bg-amber-600 active:scale-[0.98] text-slate-950 font-black text-sm py-3 rounded-lg transition-all shadow-lg shadow-amber-500/10"
+            className="w-full bg-amber-500 hover:bg-amber-600 active:scale-[0.98] text-slate-950 font-black text-sm py-3 rounded-lg transition-all shadow-lg shadow-amber-500/10 flex items-center justify-center gap-2 cursor-pointer"
             onClick={() => setShowModal(true)}
           >
-            📤 Submit New Price &amp; Queue Update
+            <Send className="w-4 h-4" /> Submit New Price &amp; Queue Update
           </button>
         )}
       </div>
@@ -176,8 +196,8 @@ export default function StationDetail() {
         <h2 className="text-sm sm:text-base font-black text-slate-200 uppercase tracking-wider">Report History</h2>
 
         {station.reports?.length === 0 ? (
-          <div className="flex flex-col items-center justify-center gap-2 py-12 text-slate-600 border border-dashed border-slate-800 rounded-xl">
-            <span className="text-4xl">📋</span>
+          <div className="flex flex-col items-center justify-center gap-2 py-12 text-slate-650 border border-dashed border-slate-800 rounded-xl">
+            <FileText className="w-10 h-10 text-slate-700" />
             <p className="text-xs font-semibold">No updates reported yet.</p>
           </div>
         ) : (
@@ -196,13 +216,17 @@ export default function StationDetail() {
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-xs font-black text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded">{getFuelDisplay(r.fuel_type)}</span>
                     {r.is_available ? (
-                      <span className="text-[10px] font-bold bg-emerald-950/40 text-emerald-400 border border-emerald-800/30 px-2.5 py-0.5 rounded-full">✅ In Stock</span>
+                      <span className="text-[10px] font-bold bg-emerald-950/40 text-emerald-400 border border-emerald-800/30 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> In Stock
+                      </span>
                     ) : (
-                      <span className="text-[10px] font-bold bg-rose-950/40 text-rose-400 border border-rose-800/30 px-2.5 py-0.5 rounded-full">❌ Out of Stock</span>
+                      <span className="text-[10px] font-bold bg-rose-950/40 text-rose-400 border border-rose-800/30 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                        <XCircle className="w-3.5 h-3.5 text-rose-450" /> Out of Stock
+                      </span>
                     )}
                     {r.is_official && (
-                      <span className="text-[9px] font-extrabold bg-emerald-950/60 text-emerald-400 border border-emerald-800/40 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                        ✅ Official
+                      <span className="text-[9px] font-extrabold bg-emerald-950/60 text-emerald-400 border border-emerald-800/40 px-2.5 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1">
+                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Official
                       </span>
                     )}
                     {i === 0 && (
@@ -212,20 +236,28 @@ export default function StationDetail() {
                     )}
                   </div>
 
-                  <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-slate-400 font-medium">
-                    <span className="flex items-center gap-1">💰 <span className="font-extrabold text-slate-200">{r.is_available ? `₦${r.price_per_litre.toLocaleString()}/L` : '—'}</span></span>
-                    <span className="flex items-center gap-1">🚗 Queue: <span className="font-extrabold text-slate-200">{r.queue_length}</span></span>
-                    <span className="flex items-center gap-1">🕐 {formatTime(r.created_at)}</span>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-slate-400 font-medium items-center">
+                    <span className="flex items-center gap-1">
+                      <Coins className="w-3.5 h-3.5 text-slate-500" />
+                      <span className="font-extrabold text-slate-200">{r.is_available ? `₦${r.price_per_litre.toLocaleString()}/L` : '—'}</span>
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Car className="w-3.5 h-3.5 text-slate-500" /> Queue: <span className="font-extrabold text-slate-200">{r.queue_length}</span>
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3.5 h-3.5 text-slate-500" /> {formatTime(r.created_at)}
+                    </span>
                   </div>
 
                   <div className="flex items-center justify-between border-t border-slate-800/60 pt-2.5 mt-1 gap-2">
                     <span className="text-xs text-slate-500 font-bold flex items-center gap-1">
-                      👍 <span className="text-slate-200 font-extrabold">{r.upvotes}</span> verifications
+                      <ThumbsUp className="w-3.5 h-3.5 text-slate-500" />
+                      <span className="text-slate-200 font-extrabold">{r.upvotes}</span> verifications
                     </span>
                     <div className="flex items-center gap-2">
                       <button
                         id={`upvote-btn-${r.id}`}
-                        className={`text-xs font-extrabold px-3 sm:px-4 py-1.5 rounded-lg border transition-all ${
+                        className={`text-xs font-extrabold px-3 sm:px-4 py-1.5 rounded-lg border transition-all cursor-pointer ${
                           isVoted
                             ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/50 cursor-default'
                             : 'bg-slate-800 text-slate-200 border-slate-700 hover:border-amber-500 hover:text-amber-500 active:scale-95'
@@ -233,24 +265,22 @@ export default function StationDetail() {
                         onClick={() => handleUpvote(r.id)}
                         disabled={isVoted}
                       >
-                        {isVoted ? '✅ Verified' : '👍 Verify Update'}
+                        {isVoted ? 'Verified' : 'Verify Update'}
                       </button>
                       <button
                         id={`flag-btn-${r.id}`}
-                        className="text-xs font-extrabold px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800 text-slate-400 hover:border-rose-500 hover:text-rose-400 active:scale-95 transition-all"
+                        className="text-xs font-extrabold px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800 text-slate-400 hover:border-rose-500 hover:text-rose-400 active:scale-95 transition-all cursor-pointer"
                         onClick={async () => {
                           try {
                             await downvoteReport(r.id);
-                            setToast('⚠️ Report flagged as inaccurate.');
-                            setTimeout(() => setToast(''), 3000);
+                            showToast('Report flagged as inaccurate.', 'info');
                             loadStation();
                           } catch {
-                            setToast('❌ Failed to flag report.');
-                            setTimeout(() => setToast(''), 3000);
+                            showToast('Failed to flag report.', 'error');
                           }
                         }}
                       >
-                        🚩 Flag
+                        Flag
                       </button>
                     </div>
                   </div>
@@ -272,8 +302,11 @@ export default function StationDetail() {
 
       {/* Toast Notification */}
       {toast && (
-        <div id="detail-toast" className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 border border-amber-500/50 text-slate-100 text-xs font-bold px-5 py-3 rounded-full shadow-2xl z-[9999] whitespace-nowrap animate-bounce">
-          {toast}
+        <div id="detail-toast" className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 border border-slate-800 text-slate-100 text-xs font-bold px-5 py-3 rounded-xl shadow-2xl z-[9999] whitespace-nowrap flex items-center gap-2 animate-bounce animate-duration-300">
+          {toast.type === "success" && <CheckCircle2 className="w-4 h-4 text-emerald-400" />}
+          {toast.type === "error" && <XCircle className="w-4 h-4 text-rose-400" />}
+          {toast.type === "info" && <AlertTriangle className="w-4 h-4 text-sky-400" />}
+          <span>{toast.message}</span>
         </div>
       )}
     </div>

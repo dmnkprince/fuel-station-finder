@@ -3,13 +3,14 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { submitReport, fetchMyStations } from '../services/api';
 import { getFuelCode } from '../utils/constants';
+import { Fuel, AlertTriangle, Search, Send, CheckCircle2, XCircle } from 'lucide-react';
 
 const FUEL_TYPES = ['Petrol', 'Diesel', 'Kerosene', 'Cooking Gas'];
 const QUEUE_LENGTHS = ['None', 'Short', 'Moderate', 'Long'];
 
 export default function ManagerDashboard() {
   const { user } = useAuth();
-  const [toast, setToast] = useState('');
+  const [toast, setToast] = useState(null);
   const [assignedStations, setAssignedStations] = useState([]);
   const [stationsLoading, setStationsLoading] = useState(true);
   const [selectedStation, setSelectedStation] = useState(null);
@@ -22,12 +23,8 @@ export default function ManagerDashboard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(''), 3000); };
+  const showToast = (msg, type = 'success') => { setToast({ message: msg, type }); setTimeout(() => setToast(null), 3000); };
   const set = (key, val) => setForm((prev) => ({ ...prev, [key]: val }));
-
-  useEffect(() => {
-    loadStations();
-  }, []);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -56,6 +53,13 @@ export default function ManagerDashboard() {
     }
   };
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      loadStations();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -76,7 +80,7 @@ export default function ManagerDashboard() {
         price_per_litre: form.is_available ? parseFloat(form.price_per_litre) : 0,
         queue_length: form.is_available ? form.queue_length : 'None',
       });
-      showToast('✅ Official update posted successfully!');
+      showToast('Official update posted successfully!', 'success');
       setForm({ fuel_type: 'Petrol', is_available: true, price_per_litre: '', queue_length: 'Short' });
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to submit update.');
@@ -92,7 +96,7 @@ export default function ManagerDashboard() {
       </Link>
 
       <div className="flex items-center gap-3">
-        <span className="text-3xl">⛽</span>
+        <Fuel className="w-8 h-8 text-amber-500" />
         <div>
           <h1 className="text-xl sm:text-2xl font-black text-slate-100">Station Manager</h1>
           <p className="text-xs text-slate-500 font-medium">Welcome, {user?.name} • Post official updates</p>
@@ -105,8 +109,8 @@ export default function ManagerDashboard() {
           <p className="text-sm font-semibold">Loading your stations...</p>
         </div>
       ) : assignedStations.length === 0 ? (
-        <div className="bg-amber-500/10 border border-amber-500/25 rounded-2xl p-6 text-center">
-          <span className="text-3xl block mb-3">⚠️</span>
+        <div className="bg-amber-500/10 border border-amber-500/25 rounded-2xl p-6 text-center flex flex-col items-center">
+          <AlertTriangle className="w-8 h-8 text-amber-500 mb-3" />
           <h2 className="text-base font-black text-slate-100">No Stations Assigned</h2>
           <p className="text-xs text-slate-400 mt-2 font-medium">Your account hasn't been assigned to any station yet. Please contact the admin to link your account.</p>
         </div>
@@ -139,13 +143,14 @@ export default function ManagerDashboard() {
                 {isDropdownOpen && (
                   <div className="absolute left-0 right-0 mt-2 bg-slate-950 border border-slate-850 rounded-lg shadow-2xl z-50 flex flex-col max-h-[340px] overflow-hidden">
                     {/* Search Input */}
-                    <div className="p-2.5 border-b border-slate-800 bg-slate-900">
+                    <div className="p-2.5 border-b border-slate-800 bg-slate-900 relative flex items-center">
+                      <Search className="absolute left-5.5 text-slate-500 w-3.5 h-3.5 pointer-events-none" />
                       <input
                         type="text"
-                        placeholder="🔍 Search station name, brand or address..."
+                        placeholder="Search station name, brand or address..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-md text-slate-200 text-xs font-medium outline-none focus:border-amber-500 transition-all placeholder-slate-700"
+                        className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-md text-slate-200 text-xs font-medium outline-none focus:border-amber-500 transition-all placeholder-slate-700"
                         autoFocus
                       />
                     </div>
@@ -185,7 +190,9 @@ export default function ManagerDashboard() {
           {/* Post Update Form */}
           <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col gap-5">
             <div className="flex items-center gap-2">
-              <h2 className="text-base font-black text-slate-100">📤 Post Official Update</h2>
+              <h2 className="text-base font-black text-slate-100 flex items-center gap-2">
+                <Send className="w-4 h-4 text-amber-500" /> Post Official Update
+              </h2>
               <span className="text-[9px] font-extrabold bg-emerald-950/60 text-emerald-400 border border-emerald-800/40 px-2 py-0.5 rounded-full uppercase tracking-wider">Official</span>
             </div>
 
@@ -203,7 +210,7 @@ export default function ManagerDashboard() {
                 <div className="grid grid-cols-2 gap-2">
                   {FUEL_TYPES.map((f) => (
                     <button key={f} type="button"
-                      className={`py-3 px-4 rounded-lg text-xs font-bold border transition-all ${
+                      className={`py-3 px-4 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
                         form.fuel_type === f
                           ? 'bg-amber-500 border-amber-500 text-slate-950 shadow-md'
                           : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-amber-500/40'
@@ -219,17 +226,21 @@ export default function ManagerDashboard() {
                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Availability</label>
                 <div className="flex gap-2">
                   <button type="button"
-                    className={`flex-1 py-2.5 rounded-lg text-xs font-bold border transition-all ${
+                    className={`flex-1 py-2.5 rounded-lg text-xs font-bold border transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                       form.is_available ? 'border-emerald-500 text-emerald-400 bg-emerald-950/20' : 'border-slate-800 text-slate-400 bg-slate-950'
                     }`}
                     onClick={() => set('is_available', true)}
-                  >✅ In Stock</button>
+                  >
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" /> In Stock
+                  </button>
                   <button type="button"
-                    className={`flex-1 py-2.5 rounded-lg text-xs font-bold border transition-all ${
+                    className={`flex-1 py-2.5 rounded-lg text-xs font-bold border transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                       !form.is_available ? 'border-rose-500 text-rose-400 bg-rose-950/20' : 'border-slate-800 text-slate-400 bg-slate-950'
                     }`}
                     onClick={() => set('is_available', false)}
-                  >❌ Out of Stock</button>
+                  >
+                    <XCircle className="w-4 h-4 text-rose-450" /> Out of Stock
+                  </button>
                 </div>
               </div>
 
@@ -254,7 +265,7 @@ export default function ManagerDashboard() {
                     <div className="flex gap-1.5">
                       {QUEUE_LENGTHS.map((q) => (
                         <button key={q} type="button"
-                          className={`flex-1 py-2 rounded-lg text-xs font-bold border transition-all ${
+                          className={`flex-1 py-2 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
                             form.queue_length === q
                               ? 'bg-amber-500 border-amber-500 text-slate-950 shadow-md'
                               : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-amber-500/40'
@@ -267,11 +278,21 @@ export default function ManagerDashboard() {
                 </>
               )}
 
-              {error && <p className="text-xs text-rose-400 bg-rose-950/20 border border-rose-900/35 p-3 rounded-lg font-medium">⚠️ {error}</p>}
+              {error && (
+                <p className="text-xs text-rose-400 bg-rose-950/20 border border-rose-900/35 p-3 rounded-lg font-medium flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+                  {error}
+                </p>
+              )}
 
               <button type="submit" disabled={loading}
-                className="w-full bg-amber-500 hover:bg-amber-600 active:scale-[0.98] disabled:opacity-50 text-slate-950 font-black text-sm py-3 rounded-lg transition-all shadow-lg shadow-amber-500/10">
-                {loading ? 'Posting…' : '📤 Post Official Update'}
+                className="w-full bg-amber-500 hover:bg-amber-600 active:scale-[0.98] disabled:opacity-50 text-slate-950 font-black text-sm py-3 rounded-lg transition-all shadow-lg shadow-amber-500/10 flex items-center justify-center gap-2 cursor-pointer">
+                {loading ? 'Posting…' : (
+                  <>
+                    <Send className="w-4 h-4" />
+                    Post Official Update
+                  </>
+                )}
               </button>
             </form>
           </section>
@@ -279,8 +300,13 @@ export default function ManagerDashboard() {
       )}
 
       {toast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 border border-amber-500/50 text-slate-100 text-xs font-bold px-5 py-3 rounded-full shadow-2xl z-[9999] whitespace-nowrap animate-bounce">
-          {toast}
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 border border-slate-800 text-slate-100 text-xs font-bold px-5 py-3 rounded-xl shadow-2xl z-[9999] whitespace-nowrap flex items-center gap-2 animate-bounce animate-duration-300">
+          {toast.type === "success" ? (
+            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+          ) : (
+            <XCircle className="w-4 h-4 text-rose-400" />
+          )}
+          <span>{toast.message}</span>
         </div>
       )}
     </div>

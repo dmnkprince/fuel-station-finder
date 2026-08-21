@@ -5,6 +5,7 @@ import L from 'leaflet';
 import { upvoteReport } from '../services/api';
 import { getFuelDisplay, getDistance } from '../utils/constants';
 import { formatTimeAgo } from '../utils/formatTimeAgo';
+import { MapPin, ThumbsUp, CheckCircle2, Locate } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 
 const STATUS_COLORS = {
@@ -50,11 +51,14 @@ function MapPopupContent({ station, onUpvote, userPosition }) {
   const [hasVoted, setHasVoted] = useState(false);
 
   useEffect(() => {
-    setUpvotes(report?.upvotes ?? 0);
-    if (report?.id) {
-      const votedList = JSON.parse(localStorage.getItem('upvoted_reports') || '[]');
-      setHasVoted(votedList.includes(report.id));
-    }
+    const timer = setTimeout(() => {
+      setUpvotes(report?.upvotes ?? 0);
+      if (report?.id) {
+        const votedList = JSON.parse(localStorage.getItem('upvoted_reports') || '[]');
+        setHasVoted(votedList.includes(report.id));
+      }
+    }, 0);
+    return () => clearTimeout(timer);
   }, [report]);
 
   const handlePopupUpvote = async () => {
@@ -102,8 +106,8 @@ function MapPopupContent({ station, onUpvote, userPosition }) {
         <div className="flex items-center justify-between mt-0.5 gap-2">
           <span className="text-slate-400 font-bold text-[9px] uppercase tracking-wider">{station.brand}</span>
           {distance && (
-            <span className="text-[9px] font-bold text-sky-400 bg-sky-950/40 border border-sky-800/30 px-1.5 py-0.5 rounded-full">
-              📍 {distance}
+            <span className="text-[9px] font-bold text-sky-400 bg-sky-950/40 border border-sky-800/30 px-1.5 py-0.5 rounded-full flex items-center gap-1">
+              <MapPin className="w-2.5 h-2.5" /> {distance}
             </span>
           )}
         </div>
@@ -147,7 +151,7 @@ function MapPopupContent({ station, onUpvote, userPosition }) {
       {/* Upvote button (based on latest_report) */}
       {report && (
         <button
-          className={`w-full text-xs font-extrabold py-1.5 px-3 rounded-lg border transition-all mt-1 ${
+          className={`w-full text-xs font-extrabold py-1.5 px-3 rounded-lg border transition-all mt-1 flex items-center justify-center gap-1.5 cursor-pointer ${
             hasVoted
               ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/50 cursor-default'
               : 'bg-slate-800 text-slate-200 border-slate-700 hover:border-amber-500 hover:text-amber-500 active:scale-95'
@@ -155,7 +159,17 @@ function MapPopupContent({ station, onUpvote, userPosition }) {
           onClick={handlePopupUpvote}
           disabled={hasVoted}
         >
-          {hasVoted ? '✅ Verified' : `👍 Verify Price (${upvotes})`}
+          {hasVoted ? (
+            <>
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+              Verified
+            </>
+          ) : (
+            <>
+              <ThumbsUp className="w-3.5 h-3.5 text-slate-400" />
+              Verify Price ({upvotes})
+            </>
+          )}
         </button>
       )}
 
@@ -194,9 +208,11 @@ export default function StationMap({ stations, userPosition, flyToSignal, select
         {userPosition && userLocationIcon && (
           <Marker position={userPosition} icon={userLocationIcon}>
             <Popup className="station-popup">
-              <div className="p-3 text-center min-w-[120px]">
-                <strong className="text-slate-100 font-extrabold text-sm block">📍 You are here</strong>
-                <span className="text-slate-400 text-[10px] font-medium block mt-1">Your current location</span>
+              <div className="p-3 text-center min-w-[120px] flex flex-col items-center gap-1">
+                <strong className="text-slate-100 font-extrabold text-sm flex items-center gap-1">
+                  <MapPin className="w-3.5 h-3.5 text-amber-500" /> You are here
+                </strong>
+                <span className="text-slate-400 text-[10px] font-medium block">Your current location</span>
               </div>
             </Popup>
           </Marker>
@@ -229,19 +245,10 @@ export default function StationMap({ stations, userPosition, flyToSignal, select
       <button
         id="btn-center-user"
         onClick={onLocateUser}
-        className="absolute bottom-6 right-6 z-[1000] bg-slate-900 hover:bg-slate-800 text-slate-100 p-3.5 rounded-full border border-slate-800 shadow-2xl active:scale-95 transition-all flex items-center justify-center group"
+        className="absolute bottom-6 right-6 z-[1000] bg-slate-900 hover:bg-slate-800 text-slate-100 p-3.5 rounded-full border border-slate-800 shadow-2xl active:scale-95 transition-all flex items-center justify-center group cursor-pointer"
         title="Center on my location"
       >
-        <svg
-          className="w-5 h-5 text-amber-500 group-hover:scale-110 transition-all"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="3"
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0z" />
-        </svg>
+        <Locate className="w-5 h-5 text-amber-500 group-hover:scale-110 transition-all" />
       </button>
     </div>
   );

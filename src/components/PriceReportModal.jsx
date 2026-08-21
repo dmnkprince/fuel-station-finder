@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { submitReport } from '../services/api';
 import { getFuelCode } from '../utils/constants';
+import { Fuel, X, Check, XCircle, AlertTriangle, Send } from 'lucide-react';
 
 const FUEL_TYPES = ['Petrol', 'Diesel', 'Kerosene', 'Cooking Gas'];
 const QUEUE_LENGTHS = ['None', 'Short', 'Moderate', 'Long'];
@@ -60,15 +61,15 @@ export default function PriceReportModal({ station, onClose, onSuccess }) {
         <div className="flex items-start justify-between p-6 border-b border-slate-800">
           <div>
             <h2 id="modal-title" className="text-lg font-black text-slate-100">Report Live Status</h2>
-            <p className="text-xs text-slate-500 font-medium mt-0.5">⛽ {station.name}</p>
+            <p className="text-xs text-slate-500 font-medium mt-0.5 flex items-center gap-1.5"><Fuel className="w-3.5 h-3.5 text-amber-500" /> {station.name}</p>
           </div>
           <button 
             id="modal-close-btn" 
-            className="bg-slate-800 border border-slate-700 hover:bg-rose-950 hover:text-rose-400 hover:border-rose-900 text-slate-400 p-1.5 rounded-lg text-xs transition-all" 
+            className="bg-slate-800 border border-slate-700 hover:bg-rose-950 hover:text-rose-400 hover:border-rose-900 text-slate-400 p-1.5 rounded-lg text-xs transition-all flex items-center gap-1.5 cursor-pointer" 
             onClick={onClose} 
             aria-label="Close"
           >
-            ✕ Close
+            <X className="w-3.5 h-3.5" /> Close
           </button>
         </div>
 
@@ -102,26 +103,26 @@ export default function PriceReportModal({ station, onClose, onSuccess }) {
               <button
                 type="button"
                 id="modal-available-yes"
-                className={`flex-1 py-2.5 rounded-lg text-xs font-bold border transition-all ${
+                className={`flex-1 py-2.5 rounded-lg text-xs font-bold border transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                   form.is_available
                     ? 'border-emerald-500 text-emerald-400 bg-emerald-950/20'
                     : 'border-slate-800 text-slate-400 bg-slate-950'
                 }`}
                 onClick={() => set('is_available', true)}
               >
-                ✅ In Stock
+                <Check className="w-3.5 h-3.5" /> In Stock
               </button>
               <button
                 type="button"
                 id="modal-available-no"
-                className={`flex-1 py-2.5 rounded-lg text-xs font-bold border transition-all ${
+                className={`flex-1 py-2.5 rounded-lg text-xs font-bold border transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                   !form.is_available
                     ? 'border-rose-500 text-rose-400 bg-rose-950/20'
                     : 'border-slate-800 text-slate-400 bg-slate-950'
                 }`}
                 onClick={() => set('is_available', false)}
               >
-                ❌ Out of Stock
+                <XCircle className="w-3.5 h-3.5" /> Out of Stock
               </button>
             </div>
           </div>
@@ -171,16 +172,28 @@ export default function PriceReportModal({ station, onClose, onSuccess }) {
           )}
 
           {/* Error */}
-          {error && <p className="text-xs text-rose-400 bg-rose-950/20 border border-rose-900/35 p-3 rounded-lg font-medium">⚠️ {error}</p>}
+          {error && (
+            <p className="text-xs text-rose-400 bg-rose-950/20 border border-rose-900/35 p-3 rounded-lg font-medium flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 shrink-0 text-rose-400" />
+              {error}
+            </p>
+          )}
 
           {/* Submit Button */}
           <button
             id="modal-submit-btn"
             type="submit"
-            className="w-full bg-amber-500 hover:bg-amber-600 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-slate-950 font-black text-sm py-3 rounded-lg transition-all shadow-lg shadow-amber-500/10 mt-2"
+            className="w-full bg-amber-500 hover:bg-amber-600 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed text-slate-950 font-black text-sm py-3 rounded-lg transition-all shadow-lg shadow-amber-500/10 mt-2 flex items-center justify-center gap-2 cursor-pointer"
             disabled={loading}
           >
-            {loading ? 'Submitting…' : '📤 Submit Report'}
+            {loading ? (
+              'Submitting…'
+            ) : (
+              <>
+                <Send className="w-4 h-4" />
+                Submit Report
+              </>
+            )}
           </button>
         </form>
       </div>

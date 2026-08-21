@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -24,14 +25,14 @@ export function AuthProvider({ children }) {
   // Fetch user on mount if token exists
   useEffect(() => {
     if (!token) {
-      setLoading(false);
-      return;
+      const timer = setTimeout(() => setLoading(false), 0);
+      return () => clearTimeout(timer);
     }
     axios.get(`${API_URL}/auth/me`)
       .then((res) => setUser(res.data.data))
       .catch(() => { setToken(null); setUser(null); })
       .finally(() => setLoading(false));
-  }, []);
+  }, [token]);
 
   const login = async (email, password) => {
     const res = await axios.post(`${API_URL}/auth/login`, { email, password });

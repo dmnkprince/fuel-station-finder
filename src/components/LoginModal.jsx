@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { X, Key, AlertTriangle } from 'lucide-react';
 
-export default function LoginModal({ onClose, onSwitchToRegister }) {
+export default function LoginModal({ onClose }) {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -46,10 +47,11 @@ export default function LoginModal({ onClose, onSwitchToRegister }) {
             <p className="text-xs text-slate-500 font-medium mt-0.5">Sign in to your account</p>
           </div>
           <button
-            className="bg-slate-800 border border-slate-700 hover:bg-rose-950 hover:text-rose-400 hover:border-rose-900 text-slate-400 p-1.5 rounded-lg text-xs transition-all"
+            className="bg-slate-800 border border-slate-700 hover:bg-rose-950 hover:text-rose-400 hover:border-rose-900 text-slate-400 p-1.5 rounded-lg text-xs transition-all flex items-center justify-center cursor-pointer"
             onClick={onClose}
+            aria-label="Close"
           >
-            ✕
+            <X className="w-4 h-4" />
           </button>
         </div>
 
@@ -78,14 +80,26 @@ export default function LoginModal({ onClose, onSwitchToRegister }) {
             />
           </div>
 
-          {error && <p className="text-xs text-rose-400 bg-rose-950/20 border border-rose-900/35 p-3 rounded-lg font-medium">⚠️ {error}</p>}
+          {error && (
+            <p className="text-xs text-rose-400 bg-rose-950/20 border border-rose-900/35 p-3 rounded-lg font-medium flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 shrink-0 text-rose-400" />
+              {error}
+            </p>
+          )}
 
           <button
             type="submit"
-            className="w-full bg-amber-500 hover:bg-amber-600 active:scale-[0.98] disabled:opacity-50 text-slate-950 font-black text-sm py-3 rounded-lg transition-all shadow-lg shadow-amber-500/10 mt-1"
+            className="w-full bg-amber-500 hover:bg-amber-600 active:scale-[0.98] disabled:opacity-50 text-slate-950 font-black text-sm py-3 rounded-lg transition-all shadow-lg shadow-amber-500/10 mt-1 flex items-center justify-center gap-2 cursor-pointer"
             disabled={loading}
           >
-            {loading ? 'Signing in…' : '🔑 Sign In'}
+            {loading ? (
+              'Signing in…'
+            ) : (
+              <>
+                <Key className="w-4 h-4" />
+                Sign In
+              </>
+            )}
           </button>
 
           {/* <p className="text-xs text-slate-500 text-center font-medium">

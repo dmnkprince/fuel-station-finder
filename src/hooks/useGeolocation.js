@@ -15,9 +15,11 @@ export function useGeolocation() {
 
   useEffect(() => {
     if (!navigator.geolocation) {
-      setError('Geolocation is not supported by your browser.');
-      setLoading(false);
-      return;
+      const timer = setTimeout(() => {
+        setError('Geolocation is not supported by your browser.');
+        setLoading(false);
+      }, 0);
+      return () => clearTimeout(timer);
     }
 
     const watchId = navigator.geolocation.watchPosition(

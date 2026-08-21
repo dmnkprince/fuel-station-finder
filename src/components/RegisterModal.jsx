@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { X, UserPlus, AlertTriangle } from 'lucide-react';
 
 export default function RegisterModal({ onClose, onSwitchToLogin }) {
   const { register } = useAuth();
@@ -41,10 +42,11 @@ export default function RegisterModal({ onClose, onSwitchToLogin }) {
             <p className="text-xs text-slate-500 font-medium mt-0.5">Join the FuelFinder NG community</p>
           </div>
           <button
-            className="bg-slate-800 border border-slate-700 hover:bg-rose-950 hover:text-rose-400 hover:border-rose-900 text-slate-400 p-1.5 rounded-lg text-xs transition-all"
+            className="bg-slate-800 border border-slate-700 hover:bg-rose-950 hover:text-rose-400 hover:border-rose-900 text-slate-400 p-1.5 rounded-lg text-xs transition-all flex items-center justify-center cursor-pointer"
             onClick={onClose}
+            aria-label="Close"
           >
-            ✕
+            <X className="w-4 h-4" />
           </button>
         </div>
 
@@ -85,14 +87,26 @@ export default function RegisterModal({ onClose, onSwitchToLogin }) {
             />
           </div>
 
-          {error && <p className="text-xs text-rose-400 bg-rose-950/20 border border-rose-900/35 p-3 rounded-lg font-medium">⚠️ {error}</p>}
+          {error && (
+            <p className="text-xs text-rose-400 bg-rose-950/20 border border-rose-900/35 p-3 rounded-lg font-medium flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 shrink-0 text-rose-400" />
+              {error}
+            </p>
+          )}
 
           <button
             type="submit"
-            className="w-full bg-amber-500 hover:bg-amber-600 active:scale-[0.98] disabled:opacity-50 text-slate-950 font-black text-sm py-3 rounded-lg transition-all shadow-lg shadow-amber-500/10 mt-1"
+            className="w-full bg-amber-500 hover:bg-amber-600 active:scale-[0.98] disabled:opacity-50 text-slate-950 font-black text-sm py-3 rounded-lg transition-all shadow-lg shadow-amber-500/10 mt-1 flex items-center justify-center gap-2 cursor-pointer"
             disabled={loading}
           >
-            {loading ? 'Creating account…' : '🚀 Create Account'}
+            {loading ? (
+              'Creating account…'
+            ) : (
+              <>
+                <UserPlus className="w-4 h-4" />
+                Create Account
+              </>
+            )}
           </button>
 
           <p className="text-xs text-slate-500 text-center font-medium">

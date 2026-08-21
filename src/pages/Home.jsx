@@ -6,6 +6,7 @@ import SearchFilter from "../components/SearchFilter";
 import PriceReportModal from "../components/PriceReportModal";
 import { getFuelDisplay } from "../utils/constants";
 import { useGeolocation } from "../hooks/useGeolocation";
+import { CheckCircle2, XCircle, MapPin, AlertTriangle, Search } from 'lucide-react';
 
 const DEFAULT_FILTERS = { search: "", fuelType: "All", status: "All" };
 
@@ -16,7 +17,7 @@ export default function Home() {
   const [selectedStation, setSelectedStation] = useState(null);
   const [reportStation, setReportStation] = useState(null);
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
-  const [toast, setToast] = useState("");
+  const [toast, setToast] = useState(null);
 
   const {
     position: userPosition,
@@ -32,16 +33,16 @@ export default function Home() {
       .finally(() => setLoading(false));
   }, []);
 
-  const showToast = (msg) => {
-    setToast(msg);
-    setTimeout(() => setToast(""), 3000);
+  const showToast = (msg, type = "success") => {
+    setToast({ message: msg, type });
+    setTimeout(() => setToast(null), 3000);
   };
 
   const handleLocateUser = () => {
     if (geoError) {
-      showToast(`⚠️ ${geoError}`);
+      showToast(geoError, "error");
     } else {
-      showToast("📍 Map centered on your location.");
+      showToast("Map centered on your location.", "info");
     }
     recenter();
   };
@@ -49,17 +50,17 @@ export default function Home() {
   const filteredStations = useMemo(() => {
     return stations.filter((s) => {
       const searchMatch =
-        filters.search === "" ||
-        s.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-        s.address.toLowerCase().includes(filters.search.toLowerCase()) ||
-        s.brand.toLowerCase().includes(filters.search.toLowerCase());
+          filters.search === "" ||
+          s.name.toLowerCase().includes(filters.search.toLowerCase()) ||
+          s.address.toLowerCase().includes(filters.search.toLowerCase()) ||
+          s.brand.toLowerCase().includes(filters.search.toLowerCase());
 
       const fuelMatch =
-        filters.fuelType === "All" ||
-        getFuelDisplay(s.latest_report?.fuel_type) === filters.fuelType;
+          filters.fuelType === "All" ||
+          getFuelDisplay(s.latest_report?.fuel_type) === filters.fuelType;
 
       const statusMatch =
-        filters.status === "All" || s.status === filters.status;
+          filters.status === "All" || s.status === filters.status;
 
       return searchMatch && fuelMatch && statusMatch;
     });
@@ -67,7 +68,7 @@ export default function Home() {
 
   const handleReportSuccess = () => {
     fetchStations().then(setStations);
-    showToast("✅ Report submitted successfully! Thank you.");
+    showToast("Report submitted successfully! Thank you.", "success");
   };
 
   return (
@@ -84,8 +85,9 @@ export default function Home() {
           </div>
         )}
         {error && (
-          <div className="absolute inset-0 flex items-center justify-center text-rose-500 font-bold z-10 px-4 text-center">
-            ⚠️ {error}
+          <div className="absolute inset-0 flex items-center justify-center text-rose-500 font-bold z-10 px-4 text-center gap-2">
+            <AlertTriangle className="w-5 h-5 text-rose-500" />
+            {error}
           </div>
         )}
         {!loading && !error && (
@@ -115,7 +117,7 @@ export default function Home() {
           </h2>
           <button
             id="btn-report-hero"
-            className="bg-amber-500 hover:bg-amber-600 active:scale-95 text-slate-950 font-extrabold text-[10px] sm:text-xs px-2.5 py-1.5 rounded-lg transition-all shadow-md shrink-0"
+            className="bg-amber-500 hover:bg-amber-600 active:scale-95 text-slate-950 font-extrabold text-[10px] sm:text-xs px-2.5 py-1.5 rounded-lg transition-all shadow-md shrink-0 cursor-pointer"
             onClick={() => setReportStation(selectedStation ?? stations[0])}
             disabled={stations.length === 0}
           >
@@ -130,8 +132,8 @@ export default function Home() {
           id="station-list"
         >
           {filteredStations.length === 0 && !loading && (
-            <div className="flex flex-col items-center justify-center gap-2 py-10 text-slate-500 text-center">
-              <span className="text-3xl">🔍</span>
+            <div className="flex flex-col items-center justify-center gap-2.5 py-10 text-slate-500 text-center">
+              <Search className="w-8 h-8 text-slate-500" />
               <p className="text-xs font-semibold">
                 No stations match filters.
               </p>
@@ -163,9 +165,12 @@ export default function Home() {
       {toast && (
         <div
           id="toast-message"
-          className="fixed bottom-16 sm:bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 border border-amber-500/50 text-slate-100 text-xs font-bold px-5 py-3 rounded-full shadow-2xl z-[9999] whitespace-nowrap animate-bounce"
+          className="fixed bottom-16 sm:bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 border border-slate-800 text-slate-100 text-xs font-bold px-5 py-3 rounded-xl shadow-2xl z-[9999] whitespace-nowrap flex items-center gap-2 animate-bounce animate-duration-300"
         >
-          {toast}
+          {toast.type === "success" && <CheckCircle2 className="w-4 h-4 text-emerald-400" />}
+          {toast.type === "error" && <XCircle className="w-4 h-4 text-rose-400" />}
+          {toast.type === "info" && <MapPin className="w-4 h-4 text-sky-400" />}
+          <span>{toast.message}</span>
         </div>
       )}
     </div>
